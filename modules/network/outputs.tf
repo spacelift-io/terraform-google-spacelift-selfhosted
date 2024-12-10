@@ -23,12 +23,7 @@ output "gke_public_v6_address" {
   description = "Public IPv6 address for GKE Ingresses"
 }
 
-output "mqtt_ipv4_address" {
-  value       = var.create_compute_address_for_mqtt ? google_compute_address.gke-mqtt-v4[0].address : null
-  description = "The IPv4 address of the MQTT service"
-}
-
-output "mqtt_ipv6_address" {
-  value       = var.create_compute_address_for_mqtt ? google_compute_address.gke-mqtt-v6[0].address : null
-  description = "The IPv6 address of the MQTT service"
+output "db_private_ip_name" {
+  value       = google_compute_global_address.database-private-ip.name
+  description = "Name of the private IP address for the database"
 }

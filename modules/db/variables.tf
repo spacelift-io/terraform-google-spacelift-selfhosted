@@ -11,6 +11,16 @@ variable "database_edition" {
   }
 }
 
+variable "database_deletion_protection" {
+  type        = bool
+  description = "Whether the database should have deletion protection enabled"
+}
+
+variable "backend_service_account_id" {
+  type        = string
+  description = "ID of the service account of the application"
+}
+
 variable "backend_service_account_email" {
   type        = string
   description = "The email of the service account to use for backend services"
@@ -30,4 +40,19 @@ variable "db_root_password" {
 variable "network_link" {
   type        = string
   description = "The URI of the network to which the database instance is connected"
+}
+
+variable "compute_network_id" {
+  type        = string
+  description = "The ID of the network to which the database instance is connected"
+}
+
+variable "database_private_ip_name" {
+  type        = string
+  description = "The name of the private IP for the database instance"
+}
+
+variable "k8s_namespace" {
+  type        = string
+  description = "The namespace in which the Spacelift backend is deployed to"
 }

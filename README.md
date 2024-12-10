@@ -2,6 +2,12 @@
 
 This module creates a base infrastructure for a self-hosted Spacelift instance on Google Cloud Platform.
 
+## State storage
+
+Check out the [Terraform](https://developer.hashicorp.com/terraform/language/backend) or the [OpenTofu](https://opentofu.org/docs/language/settings/backends/configuration/) backend documentation for more information on how to configure the state storage.
+
+Do **not** import the state into Spacelift after the installation: that would cause circular dependencies, and in case you accidentally break the Spacelift installation, you wouldn't be able to fix it.
+
 ## Usage
 
 ```hcl
@@ -12,6 +18,7 @@ module "spacelift" {
   project        = "spacelift-production"
   license_token  = "<token issued by Spacelift>"
   website_domain = "https://mycompany.spacelift.com"
+  labels         = {"app" = "spacelift"}
 }
 ```
 
@@ -35,18 +42,21 @@ The module creates:
 
 ## Inputs
 
-| Name                            | Description                                                                                                                                                                                                                                            | Type   | Default               | Required |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | --------------------- | -------- |
-| region                          | The region in which the resources will be created.                                                                                                                                                                                                     | string | -                     | yes      |
-| project                         | The ID of the project in which the resources will be created.                                                                                                                                                                                          | string | -                     | yes      |
-| license_token                   | The license token issued by Spacelift.                                                                                                                                                                                                                 | string | -                     | yes      |
-| website_domain                  | The domain under which the Spacelift instance will be hosted. This is used for the CORS rules of one of the buckets.                                                                                                                                   | string | -                     | yes      |
-| database_edition                | Edition of the Cloud SQL instance. Can be either ENTERPRISE or ENTERPRISE_PLUS.                                                                                                                                                                        | string | ENTERPRISE            | no       |
-| database_tier                   | The tier of the Cloud SQL instance.                                                                                                                                                                                                                    | string | db-perf-optimized-N-4 | no       |
-| create_compute_address_for_mqtt | Whether to create a compute address for MQTT. It is meant to be used by Service of type LoadBalancer from the GKE cluster to expose the embedded MQTT server to the world. This is only required if you want to run worker outside of the GKE cluster. | bool   | false                 | no       |
-| ip_cidr_range                   | The IP CIDR range for the subnetwork used by the GKE cluster                                                                                                                                                                                           | string | 10.0.0.0/16           | no       |
-| secondary_ip_range_for_services | The secondary IP range for the subnetwork used by the GKE cluster. This range is used for services                                                                                                                                                     | string | 192.168.16.0/22       | no       |
-| secondary_ip_range_for_pods     | The secondary IP range for the subnetwork used by the GKE cluster. This range is used for pods                                                                                                                                                         | string | 192.168.0.0/20        | no       |
+| Name                            | Description                                                                                                                                                                                                                                            | Type        | Default               | Required |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- | --------------------- | -------- |
+| region                          | The region in which the resources will be created.                                                                                                                                                                                                     | string      | -                     | yes      |
+| project                         | The ID of the project in which the resources will be created.                                                                                                                                                                                          | string      | -                     | yes      |
+| license_token                   | The license token issued by Spacelift.                                                                                                                                                                                                                 | string      | -                     | yes      |
+| website_domain                  | The domain under which the Spacelift instance will be hosted. This is used for the CORS rules of one of the buckets.                                                                                                                                   | string      | -                     | yes      |
+| labels                          | A map of labels to apply to all resources.                                                                                                                                                                                                             | map(string) | {}                    | no       |
+| k8s_namespace                   | The namespace in which the Spacelift backend service will be deployed.                                                                                                                                                                                 | string      | spacelift             | no       |
+| database_edition                | Edition of the Cloud SQL instance. Can be either ENTERPRISE or ENTERPRISE_PLUS.                                                                                                                                                                        | string      | ENTERPRISE            | no       |
+| database_tier                   | The tier of the Cloud SQL instance.                                                                                                                                                                                                                    | string      | db-perf-optimized-N-4 | no       |
+| database_deletion_protection    | Whether the Cloud SQL instance should have deletion protection enabled.                                                                                                                                                                                | bool        | true                  | no       |
+| create_compute_address_for_mqtt | Whether to create a compute address for MQTT. It is meant to be used by Service of type LoadBalancer from the GKE cluster to expose the embedded MQTT server to the world. This is only required if you want to run worker outside of the GKE cluster. | bool        | false                 | no       |
+| ip_cidr_range                   | The IP CIDR range for the subnetwork used by the GKE cluster                                                                                                                                                                                           | string      | 10.0.0.0/16           | no       |
+| secondary_ip_range_for_services | The secondary IP range for the subnetwork used by the GKE cluster. This range is used for services                                                                                                                                                     | string      | 192.168.16.0/22       | no       |
+| secondary_ip_range_for_pods     | The secondary IP range for the subnetwork used by the GKE cluster. This range is used for pods                                                                                                                                                         | string      | 192.168.0.0/20        | no       |
 
 ## Outputs
 
@@ -81,3 +91,8 @@ The module creates:
 | workspace_bucket                | Name of the bucket used for storing stack workspace data.                                                                                                    |
 | deliveries_bucket               | Name of the bucket used for storing audit trail delivery data.                                                                                               |
 
+## Release
+
+We have a [GitHub workflow](./.github/workflows/release.yaml) to automatically create a tag and a release based on the version number in [`.spacelift/config.yml`](./.spacelift/config.yml) file.
+
+When you're ready to release a new version, just simply bump the version number in the config file and open a pull request. Once the pull request is merged, the workflow will create a new release.

@@ -15,6 +15,18 @@ variable "website_domain" {
   description = "Domain name for the Spacelift frontend with protocol (e.g. https://mycompany.spacelift.com). This is used as a CORS origin for the state uploads bucket."
 }
 
+variable "labels" {
+  type        = map(string)
+  description = "Map of labels to apply to the resources"
+  default     = {}
+}
+
+variable "k8s_namespace" {
+  type        = string
+  description = "The namespace in which the Spacelift backend is deployed to"
+  default     = "spacelift"
+}
+
 variable "database_edition" {
   description = "Edition of the Cloud SQL instance. Can be either ENTERPRISE or ENTERPRISE_PLUS."
   default     = "ENTERPRISE"
@@ -27,7 +39,13 @@ variable "database_edition" {
 
 variable "database_tier" {
   description = "Tier of the Cloud SQL instance."
-  default     = "db-perf-optimized-N-4"
+  default     = "db-n1-standard-8"
+}
+
+variable "database_deletion_protection" {
+  type        = bool
+  description = "Whether the database should have deletion protection enabled"
+  default     = true
 }
 
 variable "create_compute_address_for_mqtt" {

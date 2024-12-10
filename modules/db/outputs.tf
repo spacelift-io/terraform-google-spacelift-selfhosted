@@ -4,8 +4,7 @@ output "database_cluster_name" {
 }
 
 output "connection_string" {
-  value       = "postgres://${google_sql_user.spacelift-backend-iam-user.name}@127.0.0.1/${google_sql_database.self-hosted.name}"
+  value       = "postgres://${google_sql_user.spacelift-backend-iam-user.name}@127.0.0.1/${google_sql_database.spacelift.name}"
   description = "Connection string to the database."
-  sensitive   = true
 }
 

@@ -3,6 +3,8 @@ resource "random_id" "db_name_suffix" {
 }
 
 resource "google_sql_database_instance" "spacelift" {
+  depends_on = [google_service_networking_connection.private_vpc_connection]
+
   name             = "spacelift-${random_id.db_name_suffix.hex}"
   database_version = "POSTGRES_14"
 
@@ -33,11 +35,11 @@ resource "google_sql_database_instance" "spacelift" {
     }
   }
 
-  deletion_protection = true
+  deletion_protection = var.database_deletion_protection
 }
 
-resource "google_sql_database" "self-hosted" {
-  name     = "spacelift-self-hosted"
+resource "google_sql_database" "spacelift" {
+  name     = "spacelift-db"
   instance = google_sql_database_instance.spacelift.name
 }
 

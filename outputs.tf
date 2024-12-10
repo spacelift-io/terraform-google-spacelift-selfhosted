@@ -63,12 +63,12 @@ output "gke_public_v6_address" {
 }
 
 output "mqtt_ipv4_address" {
-  value       = module.network.mqtt_ipv4_address
+  value       = module.gke.mqtt_ipv4_address
   description = "The IPv4 address of the MQTT service. It is empty if 'create_compute_address_for_mqtt' is set to false."
 }
 
 output "mqtt_ipv6_address" {
-  value       = module.network.mqtt_ipv6_address
+  value       = module.gke.mqtt_ipv6_address
   description = "The IPv6 address of the MQTT service. It is empty if 'create_compute_address_for_mqtt' is set to false."
 }
 
@@ -88,7 +88,7 @@ output "db_cluster_name" {
 
 output "db_connection_string" {
   value       = module.db.connection_string
-  description = "Connection string to the database meant to be used by the Spacelift application"
+  description = "Connection string to the database meant to be used by the Spacelift application. It isn't sensitive as it doesn't contain the password."
 }
 
 ### Secrets ###
