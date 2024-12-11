@@ -49,13 +49,3 @@ resource "google_service_networking_connection" "private_vpc_connection" {
   # so eventually, it'll be cleaned up.
   deletion_policy = "ABANDON"
 }
-
-resource "google_service_account_iam_binding" "spacelift-backend_workload-identity" {
-  depends_on = [google_sql_database_instance.spacelift]
-
-  role = "roles/iam.workloadIdentityUser"
-  members = [
-    "serviceAccount:${var.project}.svc.id.goog[${var.k8s_namespace}/spacelift-backend]"
-  ]
-  service_account_id = var.backend_service_account_id
-}

@@ -27,6 +27,12 @@ variable "k8s_namespace" {
   default     = "spacelift"
 }
 
+variable "app_service_account_name" {
+  type        = string
+  description = "The name of the service account used by the Spacelift app in the GKE cluster"
+  default     = "spacelift-backend"
+}
+
 variable "database_edition" {
   description = "Edition of the Cloud SQL instance. Can be either ENTERPRISE or ENTERPRISE_PLUS."
   default     = "ENTERPRISE"

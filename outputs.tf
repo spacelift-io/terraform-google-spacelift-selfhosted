@@ -86,9 +86,23 @@ output "db_cluster_name" {
   description = "Name of the database cluster"
 }
 
-output "db_connection_string" {
-  value       = module.db.connection_string
-  description = "Connection string to the database meant to be used by the Spacelift application. It isn't sensitive as it doesn't contain the password."
+output "db_connection_string_to_sidecar_proxy" {
+  value       = module.db.connection_string_for_sidecar_proxy
+  description = "Connection string to the database meant to be used to connect to the sidecar. See https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine#proxy"
+}
+
+output "db_connection_name" {
+  value       = module.db.database_connection_name
+  description = "Connection name of the database cluster. Needs to be passed to the Cloud SQL sidecar proxy See https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine#proxy"
+}
+output "db_dns_name" {
+  value       = module.db.database_dns_name
+  description = "DNS name of the database cluster"
+}
+
+output "db_private_ip_address" {
+  value       = module.db.database_private_ip_address
+  description = "Private IP address of the database cluster"
 }
 
 ### Secrets ###
@@ -96,6 +110,11 @@ output "db_connection_string" {
 output "db_root_password_secret_id" {
   value       = module.secrets.db_root_password_secret_id
   description = "ID of the secret containing the root password of the database."
+}
+
+output "license_token_secret_id" {
+  value       = module.secrets.license_token_secret_id
+  description = "ID of the secret containing the license token."
 }
 
 ### Storage ###

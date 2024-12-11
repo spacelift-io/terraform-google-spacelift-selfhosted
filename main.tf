@@ -1,7 +1,8 @@
 module "iam" {
   source = "./modules/iam"
 
-  project = var.project
+  app_service_account_name = var.app_service_account_name
+  project                  = var.project
 }
 
 module "artifacts" {
@@ -30,6 +31,7 @@ module "secrets" {
 module "gke" {
   source = "./modules/gke"
 
+  app_service_account_name        = var.app_service_account_name
   backend_service_account_id      = module.iam.backend_service_account_id
   compute_network_id              = module.network.network_id
   compute_network_name            = module.network.network_name
@@ -47,6 +49,7 @@ module "gke" {
 module "db" {
   source = "./modules/db"
 
+  app_service_account_name      = var.app_service_account_name
   backend_service_account_email = module.iam.backend_service_account_email
   backend_service_account_id    = module.iam.backend_service_account_id
   compute_network_id            = module.network.network_id

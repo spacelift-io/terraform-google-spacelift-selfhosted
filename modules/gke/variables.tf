@@ -13,6 +13,11 @@ variable "backend_service_account_id" {
   description = "ID of the service account of the application"
 }
 
+variable "app_service_account_name" {
+  type        = string
+  description = "The name of the service account used by the Spacelift app in the GKE cluster"
+}
+
 variable "compute_network_id" {
   type        = string
   description = "The ID of the network to create the GKE cluster in"

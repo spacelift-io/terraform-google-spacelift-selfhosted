@@ -31,6 +31,11 @@ variable "project" {
   description = "Identifier of the GCP project to deploy the DB in"
 }
 
+variable "app_service_account_name" {
+  type        = string
+  description = "The name of the service account used by the Spacelift app in the GKE cluster"
+}
+
 variable "db_root_password" {
   type        = string
   sensitive   = true
