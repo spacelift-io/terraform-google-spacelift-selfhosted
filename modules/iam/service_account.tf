@@ -20,16 +20,8 @@ resource "google_project_iam_binding" "gke-nodes_artifactregistry-reader" {
 }
 
 resource "google_service_account" "spacelift-backend" {
-  account_id   = "spacelift-backend"
+  account_id   = var.app_service_account_name
   display_name = "A service account used by spacelift backend pods to access GCP services"
-}
-
-resource "google_service_account_iam_binding" "spacelift-backend_workload-identity" {
-  role = "roles/iam.workloadIdentityUser"
-  members = [
-    "serviceAccount:${var.project}.svc.id.goog[spacelift/spacelift-backend]"
-  ]
-  service_account_id = google_service_account.spacelift-backend.id
 }
 
 resource "google_project_iam_binding" "spacelift-backend_service-account-token-creator" {

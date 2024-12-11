@@ -1,8 +1,3 @@
-variable "backend_service_account_email" {
-  type        = string
-  description = "Email of the service account of the application"
-}
-
 variable "region" {
   type        = string
   description = "Region where the buckets should be created"
@@ -11,6 +6,16 @@ variable "region" {
 variable "project" {
   type        = string
   description = "Identifier of the GCP project to deploy the storage in"
+}
+
+variable "backend_service_account_email" {
+  type        = string
+  description = "Email of the service account of the application"
+}
+
+variable "labels" {
+  type        = map(string)
+  description = "Map of labels to apply to the buckets"
 }
 
 variable "cors_origins" {

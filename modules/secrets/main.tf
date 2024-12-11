@@ -5,6 +5,7 @@ resource "random_password" "db-root-password" {
 resource "google_secret_manager_regional_secret" "db-root-password" {
   secret_id = "spacelift-db-root-password"
   location  = var.region
+  labels    = var.labels
 }
 
 resource "google_secret_manager_regional_secret_version" "secret-version-basic" {
@@ -15,6 +16,7 @@ resource "google_secret_manager_regional_secret_version" "secret-version-basic" 
 resource "google_secret_manager_regional_secret" "self-hosted-license" {
   secret_id = "self-hosted-license"
   location  = var.region
+  labels    = var.labels
 }
 
 resource "google_secret_manager_regional_secret_version" "self-hosted-license-secret-version-basic" {
