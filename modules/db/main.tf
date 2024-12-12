@@ -39,7 +39,7 @@ resource "google_sql_database_instance" "spacelift" {
 }
 
 resource "google_sql_database" "spacelift" {
-  name     = "spacelift-db"
+  name     = "spacelift"
   instance = google_sql_database_instance.spacelift.name
 }
 
