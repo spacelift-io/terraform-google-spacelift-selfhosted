@@ -23,3 +23,7 @@ output "connection_string_for_sidecar_proxy" {
   description = "Connection string to the database."
 }
 
+output "database_root_password" {
+  value       = random_password.db-root-password.result
+  sensitive = true
+}

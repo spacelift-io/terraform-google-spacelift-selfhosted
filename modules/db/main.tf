@@ -2,6 +2,10 @@ resource "random_id" "db_name_suffix" {
   byte_length = 4
 }
 
+resource "random_password" "db-root-password" {
+  length = 20
+}
+
 resource "google_sql_database_instance" "spacelift" {
   depends_on = [google_service_networking_connection.private_vpc_connection]
 
@@ -10,7 +14,7 @@ resource "google_sql_database_instance" "spacelift" {
 
   # Please note that Spacelift application is authenticating passwordless via IAM,
   # but this is a mandatory parameter.
-  root_password = var.db_root_password
+  root_password = random_password.db-root-password.result
 
   settings {
     edition           = var.database_edition
