@@ -57,3 +57,7 @@ variable "k8s_namespace" {
   type        = string
   description = "The namespace in which the Spacelift backend is deployed to"
 }
+
+variable "seed" {
+  type = string
+}

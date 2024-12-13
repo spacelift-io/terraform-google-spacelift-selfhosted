@@ -35,3 +35,7 @@ variable "compute_network_id" {
   type        = string
   description = "The ID of the network to which the database instance is connected"
 }
+
+variable "seed" {
+  type = string
+}
