@@ -16,7 +16,7 @@ module "spacelift" {
 
   region         = "europe-west1"
   project        = "spacelift-production"
-  website_domain = "https://mycompany.spacelift.com"
+  website_domain = "spacelift.mycompany.com"
   labels         = {"app" = "spacelift"}
 }
 ```

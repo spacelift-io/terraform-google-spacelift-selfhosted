@@ -7,7 +7,7 @@ variable "project" {
 }
 
 variable "website_domain" {
-  description = "Domain name for the Spacelift frontend with protocol (e.g. https://mycompany.spacelift.com). This is used as a CORS origin for the state uploads bucket."
+  description = "Domain name for the Spacelift frontend without protocol (e.g. spacelift.mycompany.com). This is used as a CORS origin for the state uploads bucket."
 }
 
 variable "labels" {
