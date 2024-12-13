@@ -16,11 +16,6 @@ variable "database_deletion_protection" {
   description = "Whether the database should have deletion protection enabled"
 }
 
-variable "backend_service_account_id" {
-  type        = string
-  description = "ID of the service account of the application"
-}
-
 variable "backend_service_account_email" {
   type        = string
   description = "The email of the service account to use for backend services"
@@ -29,11 +24,6 @@ variable "backend_service_account_email" {
 variable "project" {
   type        = string
   description = "Identifier of the GCP project to deploy the DB in"
-}
-
-variable "app_service_account_name" {
-  type        = string
-  description = "The name of the service account used by the Spacelift app in the GKE cluster"
 }
 
 variable "network_link" {
@@ -49,9 +39,4 @@ variable "compute_network_id" {
 variable "database_private_ip_name" {
   type        = string
   description = "The name of the private IP for the database instance"
-}
-
-variable "k8s_namespace" {
-  type        = string
-  description = "The namespace in which the Spacelift backend is deployed to"
 }
