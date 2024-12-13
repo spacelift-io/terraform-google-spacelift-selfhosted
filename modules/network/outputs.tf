@@ -18,7 +18,17 @@ output "gke_public_v4_address" {
   description = "Public IPv4 address for GKE Ingresses"
 }
 
+output "gke_public_v4_name" {
+  value       = google_compute_global_address.gke-public-v4.name
+  description = "Public IPv4 address for GKE Ingresses"
+}
+
 output "gke_public_v6_address" {
   value       = google_compute_global_address.gke-public-v6.address
   description = "Public IPv6 address for GKE Ingresses"
+}
+
+output "gke_public_v6_name" {
+  value       = google_compute_global_address.gke-public-v6.name
+  description = "Public IPv4 address for GKE Ingresses"
 }
