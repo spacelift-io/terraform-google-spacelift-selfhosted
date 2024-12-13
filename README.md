@@ -39,6 +39,8 @@ The module creates:
   - a secret for the license token.
 - Storage resources
   - various buckets for storing run metadata, run logs, workspaces, stack states etc.
+- GKE autopilot cluster  
+  - a Kubernetes cluster to install Spacelift on
 
 ### Inputs
 
