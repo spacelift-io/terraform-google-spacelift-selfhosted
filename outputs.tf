@@ -80,29 +80,24 @@ output "artifact_repository_url" {
 }
 
 ### Database ###
-
-output "db_cluster_name" {
-  value       = module.db.database_cluster_name
-  description = "Name of the database cluster"
-}
-
-output "db_connection_string_to_sidecar_proxy" {
-  value       = module.db.connection_string_for_sidecar_proxy
-  description = "Connection string to the database meant to be used to connect to the sidecar. See https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine#proxy"
+output "db_instance_name" {
+  value       = module.db.instance_name
+  description = "Name of the database instance"
 }
 
 output "db_connection_name" {
   value       = module.db.database_connection_name
   description = "Connection name of the database cluster. Needs to be passed to the Cloud SQL sidecar proxy See https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine#proxy"
 }
-output "db_dns_name" {
-  value       = module.db.database_dns_name
-  description = "DNS name of the database cluster"
-}
 
 output "db_private_ip_address" {
-  value       = module.db.database_private_ip_address
+  value       = module.network.db_private_ip_name
   description = "Private IP address of the database cluster"
+}
+
+output "db_database_name" {
+  value = module.db.database_name
+  description = "Internal PostgreSQL db name inside the Cloud SQL instance."
 }
 
 output "db_root_password" {
