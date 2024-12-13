@@ -39,7 +39,7 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 
   network                 = var.compute_network_id
   service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [var.database_private_ip_name]
+  reserved_peering_ranges = [google_compute_global_address.database-private-ip.name]
 
   # There is an annoying bug during 'terraform destroy' command where the peering connection
   # cannot be deleted sometimes due to an obscure error: https://github.com/hashicorp/terraform-provider-google/issues/16275

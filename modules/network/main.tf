@@ -4,15 +4,6 @@ resource "google_compute_network" "default" {
   enable_ula_internal_ipv6 = true
 }
 
-resource "google_compute_global_address" "database-private-ip" {
-  name          = "spacelift-database-private-ip"
-  purpose       = "VPC_PEERING"
-  address_type  = "INTERNAL"
-  prefix_length = 16
-  network       = google_compute_network.default.id
-  labels        = var.labels
-}
-
 # This public v4 address is meant to be used by Ingresses from the GKE cluster to expose services to the world.
 resource "google_compute_global_address" "gke-public-v4" {
   name         = "spacelift-gke-public-v4"

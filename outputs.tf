@@ -91,8 +91,8 @@ output "db_connection_name" {
 }
 
 output "db_private_ip_address" {
-  value       = module.network.db_private_ip_name
-  description = "Private IP address of the database cluster"
+  value       = module.db.database_private_ip_address
+  description = "Private IP address of the database instance."
 }
 
 output "db_database_name" {

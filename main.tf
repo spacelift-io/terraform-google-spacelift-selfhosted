@@ -44,7 +44,6 @@ module "db" {
   compute_network_id            = module.network.network_id
   database_deletion_protection  = var.database_deletion_protection
   database_edition              = var.database_edition
-  database_private_ip_name      = module.network.db_private_ip_name
   database_tier                 = var.database_tier
   network_link                  = module.network.network_link
   project                       = var.project

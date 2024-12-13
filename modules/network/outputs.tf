@@ -22,8 +22,3 @@ output "gke_public_v6_address" {
   value       = google_compute_global_address.gke-public-v6.address
   description = "Public IPv6 address for GKE Ingresses"
 }
-
-output "db_private_ip_name" {
-  value       = google_compute_global_address.database-private-ip.name
-  description = "Name of the private IP address for the database"
-}
