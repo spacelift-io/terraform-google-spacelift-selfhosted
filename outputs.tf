@@ -112,11 +112,6 @@ output "db_root_password_secret_id" {
   description = "ID of the secret containing the root password of the database."
 }
 
-output "license_token_secret_id" {
-  value       = module.secrets.license_token_secret_id
-  description = "ID of the secret containing the license token."
-}
-
 ### Storage ###
 
 output "large_queue_messages_bucket" {
@@ -168,4 +163,3 @@ output "deliveries_bucket" {
   value       = module.storage.deliveries_bucket
   description = "Name of the bucket used for storing audit trail delivery data"
 }
-

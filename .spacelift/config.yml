@@ -7,7 +7,6 @@ tests:
     environment:
       TF_VAR_region: europe-west3
       TF_VAR_project: self-hosted-v3-testing
-      TF_VAR_license_token: my-license-token
       TF_VAR_database_tier : db-f1-micro
       TF_VAR_website_domain: http://spacelift.mycorp.com
       TF_VAR_labels: '{"environment":"tf-module-testing"}'

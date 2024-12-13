@@ -6,11 +6,6 @@ variable "project" {
   description = "Identifier of the GCP project to deploy the infrastructure into."
 }
 
-variable "license_token" {
-  description = "License token for the Self-Hosted instance."
-  sensitive   = true
-}
-
 variable "website_domain" {
   description = "Domain name for the Spacelift frontend with protocol (e.g. https://mycompany.spacelift.com). This is used as a CORS origin for the state uploads bucket."
 }
