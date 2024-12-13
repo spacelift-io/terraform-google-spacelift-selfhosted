@@ -16,7 +16,6 @@ module "spacelift" {
 
   region         = "europe-west1"
   project        = "spacelift-production"
-  license_token  = "<token issued by Spacelift>"
   website_domain = "https://mycompany.spacelift.com"
   labels         = {"app" = "spacelift"}
 }
@@ -36,7 +35,6 @@ The module creates:
   - a Postgres Cloud SQL instance
 - Secret Manager resources
   - a secret for the root password of the Cloud SQL instance. Note that we recommend using passwordless authentication via [Cloud SQL Auth Proxy](https://cloud.google.com/sql/docs/mysql/connect-auth-proxy)
-  - a secret for the license token.
 - Storage resources
   - various buckets for storing run metadata, run logs, workspaces, stack states etc.
 
@@ -46,7 +44,6 @@ The module creates:
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- | --------------------- | -------- |
 | region                          | The region in which the resources will be created.                                                                                                                                                                                                     | string      | -                     | yes      |
 | project                         | The ID of the project in which the resources will be created.                                                                                                                                                                                          | string      | -                     | yes      |
-| license_token                   | The license token issued by Spacelift.                                                                                                                                                                                                                 | string      | -                     | yes      |
 | website_domain                  | The domain under which the Spacelift instance will be hosted. This is used for the CORS rules of one of the buckets.                                                                                                                                   | string      | -                     | yes      |
 | labels                          | A map of labels to apply to all resources.                                                                                                                                                                                                             | map(string) | {}                    | no       |
 | k8s_namespace                   | The namespace in which the Spacelift backend service will be deployed.                                                                                                                                                                                 | string      | spacelift             | no       |
@@ -84,7 +81,6 @@ The module creates:
 | db_connection_name                    | Connection name of the database cluster. Needs to be passed to the Cloud SQL sidecar proxy. See the [official docs](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine#proxy). |
 | db_dns_name                           | DNS name of the Cloud SQL instance.                                                                                                                                                           |
 | db_private_ip_address                 | Private IP address of the Cloud SQL instance.                                                                                                                                                 |
-| license_token_secret_id               | Secret ID of the license token.                                                                                                                                                               |
 | large_queue_messages_bucket           | Name of the bucket used for storing large queue messages.                                                                                                                                     |
 | metadata_bucket                       | Name of the bucket used for storing run metadata.                                                                                                                                             |
 | modules_bucket                        | Name of the bucket used for storing Spacelift modules.                                                                                                                                        |

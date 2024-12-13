@@ -24,7 +24,6 @@ module "secrets" {
   depends_on = [module.iam]
 
   labels        = var.labels
-  license_token = var.license_token
   region        = var.region
 }
 
