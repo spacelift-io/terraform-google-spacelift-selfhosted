@@ -3,6 +3,11 @@ output "instance_name" {
   description = "Name of the database instance."
 }
 
+output "database_private_ip_address" {
+  value       = google_compute_global_address.database-private-ip.address
+  description = "Private IP address of the database instance."
+}
+
 output "database_name" {
   value       = google_sql_database.spacelift.name
   description = "Internal PostgreSQL db name inside the Cloud SQL instance."

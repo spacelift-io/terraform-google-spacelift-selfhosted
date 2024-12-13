@@ -35,8 +35,3 @@ variable "compute_network_id" {
   type        = string
   description = "The ID of the network to which the database instance is connected"
 }
-
-variable "database_private_ip_name" {
-  type        = string
-  description = "The name of the private IP for the database instance"
-}
