@@ -9,7 +9,6 @@ resource "google_compute_global_address" "gke-public-v4" {
   name         = "spacelift-gke-public-v4"
   address_type = "EXTERNAL"
   ip_version   = "IPV4"
-  labels       = var.labels
 }
 
 # This public v6 address is meant to be used by Ingresses from the GKE cluster to expose services to the world.
@@ -17,5 +16,4 @@ resource "google_compute_global_address" "gke-public-v6" {
   name         = "spacelift-gke-public-v6"
   address_type = "EXTERNAL"
   ip_version   = "IPV6"
-  labels       = var.labels
 }

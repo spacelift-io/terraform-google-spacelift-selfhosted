@@ -4,7 +4,6 @@ resource "google_compute_address" "gke-mqtt-v4" {
   name         = "gke-mqtt-v4"
   address_type = "EXTERNAL"
   ip_version   = "IPV4"
-  labels       = var.labels
 }
 
 resource "google_compute_address" "gke-mqtt-v6" {
@@ -15,5 +14,4 @@ resource "google_compute_address" "gke-mqtt-v6" {
   ip_version         = "IPV6"
   ipv6_endpoint_type = "NETLB"
   subnetwork         = google_compute_subnetwork.default.id
-  labels             = var.labels
 }

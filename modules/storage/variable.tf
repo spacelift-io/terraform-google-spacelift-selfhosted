@@ -13,11 +13,6 @@ variable "backend_service_account_email" {
   description = "Email of the service account of the application"
 }
 
-variable "labels" {
-  type        = map(string)
-  description = "Map of labels to apply to the buckets"
-}
-
 variable "cors_origins" {
   type        = list(string)
   description = "List of allowed origins for CORS. This is being used for state uploads during Stack creations. Example: [\"https://spacelift.mycorp.com\"]"

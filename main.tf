@@ -8,15 +8,11 @@ module "iam" {
 module "artifacts" {
   source     = "./modules/artifacts"
   depends_on = [module.iam]
-
-  labels = var.labels
 }
 
 module "network" {
   source     = "./modules/network"
   depends_on = [module.iam]
-
-  labels = var.labels
 }
 
 module "gke" {
@@ -30,7 +26,6 @@ module "gke" {
   gke_service_account_email       = module.iam.gke_service_account_email
   ip_cidr_range                   = var.ip_cidr_range
   k8s_namespace                   = var.k8s_namespace
-  labels                          = var.labels
   project                         = var.project
   region                          = var.region
   secondary_ip_range_for_pods     = var.secondary_ip_range_for_pods
@@ -54,7 +49,6 @@ module "storage" {
 
   backend_service_account_email = module.iam.backend_service_account_email
   cors_origins                  = [var.website_domain]
-  labels                        = var.labels
   project                       = var.project
   region                        = var.region
 }
