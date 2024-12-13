@@ -20,7 +20,6 @@ locals {
 resource "google_storage_bucket" "spacelift-large-queue-messages" {
   name     = local.bucket_names["large-queue"]
   location = var.region
-  labels   = var.labels
 
   public_access_prevention = "enforced"
 
@@ -45,7 +44,6 @@ resource "google_storage_bucket" "spacelift-large-queue-messages" {
 resource "google_storage_bucket" "spacelift-metadata" {
   name     = local.bucket_names["metadata"]
   location = var.region
-  labels   = var.labels
 
   public_access_prevention = "enforced"
 
@@ -71,7 +69,6 @@ resource "google_storage_bucket" "spacelift-metadata" {
 resource "google_storage_bucket" "spacelift-modules" {
   name     = local.bucket_names["modules"]
   location = var.region
-  labels   = var.labels
 
   versioning {
     enabled = true
@@ -83,7 +80,6 @@ resource "google_storage_bucket" "spacelift-modules" {
 resource "google_storage_bucket" "spacelift-policy-inputs" {
   name     = local.bucket_names["policy"]
   location = var.region
-  labels   = var.labels
 
   public_access_prevention = "enforced"
 
@@ -104,7 +100,6 @@ resource "google_storage_bucket" "spacelift-policy-inputs" {
 resource "google_storage_bucket" "spacelift-run-logs" {
   name     = local.bucket_names["run-logs"]
   location = var.region
-  labels   = var.labels
 
   public_access_prevention = "enforced"
 
@@ -144,7 +139,6 @@ resource "google_storage_bucket" "spacelift-run-logs" {
 resource "google_storage_bucket" "spacelift-states" {
   name     = local.bucket_names["states"]
   location = var.region
-  labels   = var.labels
 
   versioning {
     enabled = true
@@ -175,7 +169,6 @@ resource "google_storage_bucket" "spacelift-states" {
 resource "google_storage_bucket" "spacelift-uploads" {
   name     = local.bucket_names["uploads"]
   location = var.region
-  labels   = var.labels
 
   public_access_prevention = "enforced"
 
@@ -221,7 +214,6 @@ resource "google_storage_bucket" "spacelift-uploads" {
 resource "google_storage_bucket" "spacelift-user-uploaded-workspaces" {
   name     = local.bucket_names["user-uploads"]
   location = var.region
-  labels   = var.labels
 
   public_access_prevention = "enforced"
 
@@ -261,7 +253,6 @@ resource "google_storage_bucket" "spacelift-user-uploaded-workspaces" {
 resource "google_storage_bucket" "spacelift-workspace" {
   name     = local.bucket_names["workspace"]
   location = var.region
-  labels   = var.labels
 
   public_access_prevention = "enforced"
 
@@ -301,7 +292,6 @@ resource "google_storage_bucket" "spacelift-workspace" {
 resource "google_storage_bucket" "spacelift-deliveries" {
   name     = local.bucket_names["deliveries"]
   location = var.region
-  labels   = var.labels
 
   public_access_prevention = "enforced"
 

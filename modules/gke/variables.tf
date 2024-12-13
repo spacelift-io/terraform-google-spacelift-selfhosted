@@ -57,8 +57,3 @@ variable "k8s_namespace" {
   type        = string
   description = "The namespace in which the Spacelift backend is deployed to"
 }
-
-variable "labels" {
-  type        = map(string)
-  description = "Map of labels to apply to the Artifact Registry repository"
-}
