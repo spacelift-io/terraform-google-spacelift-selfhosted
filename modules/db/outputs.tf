@@ -1,6 +1,11 @@
+output "instance_name" {
+  value       = google_sql_database_instance.spacelift.name
+  description = "Name of the database instance."
+}
+
 output "database_name" {
   value       = google_sql_database.spacelift.name
-  description = "Name of the database."
+  description = "Internal PostgreSQL db name inside the Cloud SQL instance."
 }
 
 output "database_iam_user" {
