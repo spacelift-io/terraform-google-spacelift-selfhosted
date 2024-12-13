@@ -61,7 +61,7 @@ The module creates:
 ### Outputs
 
 | Name                                  | Description                                                                                                                                                                                   |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | region                                | The region in which the resources were created.                                                                                                                                               |
 | project                               | The ID of the project in which the resources were created.                                                                                                                                    |
 | gke_service_account_email             | The email of the service account used by the GKE cluster.                                                                                                                                     |
@@ -79,7 +79,7 @@ The module creates:
 | artifact_repository_url               | URL of the Docker artifact repository.                                                                                                                                                        |
 | db_cluster_name                       | Name of the Cloud SQL instance.                                                                                                                                                               |
 | db_connection_string_to_sidecar_proxy | Connection string to the database meant to be used to connect to the sidecar. See the [official docs](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine#proxy).               |
-| db_root_password_secret_id            | Secret ID of the root password for the Cloud SQL instance.                                                                                                                                    |
+| db_root_password                      | Database root password                                                                                                                                                                        |
 | db_connection_name                    | Connection name of the database cluster. Needs to be passed to the Cloud SQL sidecar proxy. See the [official docs](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine#proxy). |
 | db_dns_name                           | DNS name of the Cloud SQL instance.                                                                                                                                                           |
 | db_private_ip_address                 | Private IP address of the Cloud SQL instance.                                                                                                                                                 |

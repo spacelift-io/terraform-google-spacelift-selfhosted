@@ -19,14 +19,6 @@ module "network" {
   labels = var.labels
 }
 
-module "secrets" {
-  source     = "./modules/secrets"
-  depends_on = [module.iam]
-
-  labels        = var.labels
-  region        = var.region
-}
-
 module "gke" {
   source = "./modules/gke"
 
@@ -56,7 +48,6 @@ module "db" {
   database_edition              = var.database_edition
   database_private_ip_name      = module.network.db_private_ip_name
   database_tier                 = var.database_tier
-  db_root_password              = module.secrets.db_root_password
   k8s_namespace                 = var.k8s_namespace
   network_link                  = module.network.network_link
   project                       = var.project

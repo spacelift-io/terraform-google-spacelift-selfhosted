@@ -36,12 +36,6 @@ variable "app_service_account_name" {
   description = "The name of the service account used by the Spacelift app in the GKE cluster"
 }
 
-variable "db_root_password" {
-  type        = string
-  sensitive   = true
-  description = "Root password for the database"
-}
-
 variable "network_link" {
   type        = string
   description = "The URI of the network to which the database instance is connected"

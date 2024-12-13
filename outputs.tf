@@ -105,11 +105,10 @@ output "db_private_ip_address" {
   description = "Private IP address of the database cluster"
 }
 
-### Secrets ###
-
-output "db_root_password_secret_id" {
-  value       = module.secrets.db_root_password_secret_id
-  description = "ID of the secret containing the root password of the database."
+output "db_root_password" {
+  value       = module.db.database_root_password
+  description = "The database root password"
+  sensitive = true
 }
 
 ### Storage ###
