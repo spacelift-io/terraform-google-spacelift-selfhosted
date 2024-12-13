@@ -26,7 +26,7 @@ module "gke-router" {
   version = "~> 6.0"
   project = var.project
   region  = var.region
-  name    = "gke-router"
+  name    = "gke-router-${var.seed}"
 
   network = var.compute_network_name
   nats = [{

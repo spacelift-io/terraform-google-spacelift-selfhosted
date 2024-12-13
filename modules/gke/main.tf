@@ -1,5 +1,5 @@
 resource "google_container_cluster" "spacelift" {
-  name = "spacelift"
+  name = "spacelift-${var.seed}"
 
   location                 = var.region
   enable_autopilot         = true

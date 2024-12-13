@@ -1,19 +1,15 @@
-resource "random_id" "unique-bucket-suffix" {
-  byte_length = 4
-}
-
 locals {
   bucket_names = {
-    "large-queue" : "spacelift-large-queue-messages-${random_id.unique-bucket-suffix.hex}",
-    "metadata" : "spacelift-metadata-${random_id.unique-bucket-suffix.hex}",
-    "modules" : "spacelift-modules-${random_id.unique-bucket-suffix.hex}",
-    "policy" : "spacelift-policy-inputs-${random_id.unique-bucket-suffix.hex}",
-    "run-logs" : "spacelift-run-logs-${random_id.unique-bucket-suffix.hex}",
-    "states" : "spacelift-states-${random_id.unique-bucket-suffix.hex}",
-    "uploads" : "spacelift-uploads-${random_id.unique-bucket-suffix.hex}",
-    "user-uploads" : "spacelift-user-uploaded-workspaces-${random_id.unique-bucket-suffix.hex}",
-    "workspace" : "spacelift-workspace-${random_id.unique-bucket-suffix.hex}",
-    "deliveries" : "spacelift-deliveries-${random_id.unique-bucket-suffix.hex}",
+    "large-queue" : "spacelift-large-queue-messages-${var.seed}",
+    "metadata" : "spacelift-metadata-${var.seed}",
+    "modules" : "spacelift-modules-${var.seed}",
+    "policy" : "spacelift-policy-inputs-${var.seed}",
+    "run-logs" : "spacelift-run-logs-${var.seed}",
+    "states" : "spacelift-states-${var.seed}",
+    "uploads" : "spacelift-uploads-${var.seed}",
+    "user-uploads" : "spacelift-user-uploaded-workspaces-${var.seed}",
+    "workspace" : "spacelift-workspace-${var.seed}",
+    "deliveries" : "spacelift-deliveries-${var.seed}",
   }
 }
 

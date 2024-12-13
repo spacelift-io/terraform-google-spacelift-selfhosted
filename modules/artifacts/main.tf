@@ -1,5 +1,5 @@
 resource "google_artifact_registry_repository" "spacelift" {
-  repository_id = "spacelift"
+  repository_id = "spacelift-${var.seed}"
   format        = "DOCKER"
   description   = "This repository contains the images for Spacelift"
 

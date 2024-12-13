@@ -17,3 +17,7 @@ variable "cors_origins" {
   type        = list(string)
   description = "List of allowed origins for CORS. This is being used for state uploads during Stack creations. Example: [\"https://spacelift.mycorp.com\"]"
 }
+
+variable "seed" {
+  type = string
+}

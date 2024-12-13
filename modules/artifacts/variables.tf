@@ -1,0 +1,3 @@
+variable "seed" {
+  type = string
+}

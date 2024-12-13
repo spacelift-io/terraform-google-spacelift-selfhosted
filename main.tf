@@ -1,3 +1,7 @@
+resource "random_id" "seed" {
+  byte_length = 4
+}
+
 module "iam" {
   source = "./modules/iam"
 
@@ -8,15 +12,18 @@ module "iam" {
 module "artifacts" {
   source     = "./modules/artifacts"
   depends_on = [module.iam]
+  seed = random_id.seed.hex
 }
 
 module "network" {
   source     = "./modules/network"
   depends_on = [module.iam]
+  seed = random_id.seed.hex
 }
 
 module "gke" {
   source = "./modules/gke"
+  seed = random_id.seed.hex
 
   app_service_account_name        = var.app_service_account_name
   backend_service_account_id      = module.iam.backend_service_account_id
@@ -34,6 +41,7 @@ module "gke" {
 
 module "db" {
   source = "./modules/db"
+  seed = random_id.seed.hex
 
   backend_service_account_email = module.iam.backend_service_account_email
   compute_network_id            = module.network.network_id
@@ -46,6 +54,7 @@ module "db" {
 
 module "storage" {
   source = "./modules/storage"
+  seed = random_id.seed.hex
 
   backend_service_account_email = module.iam.backend_service_account_email
   cors_origins                  = [var.website_domain]
