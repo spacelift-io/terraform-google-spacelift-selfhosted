@@ -41,6 +41,7 @@ resource "google_sql_database_instance" "spacelift" {
 resource "google_sql_database" "spacelift" {
   name     = "spacelift"
   instance = google_sql_database_instance.spacelift.name
+  depends_on = [google_sql_user.spacelift-backend-iam-user]
 }
 
 resource "google_sql_user" "spacelift-backend-iam-user" {
