@@ -157,3 +157,48 @@ output "deliveries_bucket" {
   value       = module.storage.deliveries_bucket
   description = "Name of the bucket used for storing audit trail delivery data"
 }
+
+output "shell" {
+  sensitive = true
+  value = templatefile("${path.module}/env.tftpl", {env: {
+    GCP_PROJECT: var.project,
+    GCP_LOCATION: var.region,
+    SERVER_DOMAIN: var.website_domain,
+    WEBHOOKS_ENDPOINT: "https://${var.website_domain}/webhooks",
+
+    # IAM
+    BACKEND_SERVICE_ACCOUNT: module.iam.backend_service_account_email,
+
+    # Network
+    PUBLIC_IP_NAME: module.network.gke_public_v4_name,
+    PUBLIC_IPV6_NAME: module.network.gke_public_v6_name,
+
+    # Artifacts
+    ARTIFACT_REGISTRY_DOMAIN: module.artifacts.repository_domain,
+    ARTIFACT_REGISTRY_REPOSITORY: module.artifacts.repository_url,
+    BACKEND_IMAGE: "${module.artifacts.repository_url}/spacelift-backend",
+    LAUNCHER_IMAGE: "${module.artifacts.repository_url}/spacelift-launcher"
+
+    # Buckets
+    OBJECT_STORAGE_BUCKET_DELIVERIES=module.storage.deliveries_bucket,
+    OBJECT_STORAGE_BUCKET_LARGE_QUEUE_MESSAGES=module.storage.large_queue_messages_bucket,
+    OBJECT_STORAGE_BUCKET_MODULES=module.storage.modules_bucket,
+    OBJECT_STORAGE_BUCKET_POLICY_INPUTS=module.storage.policy_inputs_bucket,
+    OBJECT_STORAGE_BUCKET_RUN_LOGS=module.storage.run_logs_bucket,
+    OBJECT_STORAGE_BUCKET_STATES=module.storage.states_bucket,
+    OBJECT_STORAGE_BUCKET_USER_UPLOADED_WORKSPACES=module.storage.user_uploaded_workspaces_bucket,
+    OBJECT_STORAGE_BUCKET_WORKSPACE=module.storage.workspace_bucket,
+    OBJECT_STORAGE_BUCKET_METADATA=module.storage.metadata_bucket
+    OBJECT_STORAGE_BUCKET_UPLOADS=module.storage.uploads_bucket
+    OBJECT_STORAGE_BUCKET_UPLOADS_URL="https://storage.googleapis.com"
+
+    # Database
+    DATABASE_NAME=module.db.database_name
+    DATABASE_USER=module.db.database_iam_user
+    DATABASE_CONNECTION_NAME=module.db.database_connection_name
+    DB_ROOT_PASSWORD=module.db.database_root_password
+
+    #GKE
+    GKE_CLUSTER_NAME=module.gke.gke_cluster_name
+  }})
+}
