@@ -57,7 +57,7 @@ module "storage" {
   seed = random_id.seed.hex
 
   backend_service_account_email = module.iam.backend_service_account_email
-  cors_origins                  = [var.website_domain]
+  cors_origins                  = ["https://${var.website_domain}"]
   project                       = var.project
   region                        = var.region
 }
