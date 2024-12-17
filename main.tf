@@ -4,6 +4,7 @@ resource "random_id" "seed" {
 
 module "iam" {
   source = "./modules/iam"
+  seed = random_id.seed.hex
 
   app_service_account_name = var.app_service_account_name
   project                  = var.project
