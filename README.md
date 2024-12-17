@@ -31,6 +31,7 @@ The module creates:
   - a compute subnetwork for the GKE cluster
 - Artifact repository
   - a Google Artifact Registry repository for storing Docker images
+  - a PUBLIC Google Artifact Registry repository for storing Docker images for workers (if external workers are enabled)
 - Database resources
   - a Postgres Cloud SQL instance
 - Storage resources
