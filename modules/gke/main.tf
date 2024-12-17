@@ -15,7 +15,7 @@ resource "google_container_cluster" "spacelift" {
   }
 
   network    = var.compute_network_id
-  subnetwork = google_compute_subnetwork.default.self_link
+  subnetwork = var.subnetwork.self_link
 
   private_cluster_config {
     # This prevents nodes to be assigned any external IP that can be routed on the internet
@@ -24,8 +24,8 @@ resource "google_container_cluster" "spacelift" {
 
   ip_allocation_policy {
     stack_type                    = "IPV4_IPV6"
-    services_secondary_range_name = google_compute_subnetwork.default.secondary_ip_range[0].range_name
-    cluster_secondary_range_name  = google_compute_subnetwork.default.secondary_ip_range[1].range_name
+    services_secondary_range_name = var.services_ip_range_name
+    cluster_secondary_range_name  = var.pods_ip_range_name
   }
 
   # Set `deletion_protection` to `true` will ensure that one cannot

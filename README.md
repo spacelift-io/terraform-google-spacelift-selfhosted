@@ -31,6 +31,7 @@ The module creates:
   - a compute subnetwork for the GKE cluster
 - Artifact repository
   - a Google Artifact Registry repository for storing Docker images
+  - a PUBLIC Google Artifact Registry repository for storing Docker images for workers (if external workers are enabled)
 - Database resources
   - a Postgres Cloud SQL instance
 - Storage resources
@@ -41,7 +42,7 @@ The module creates:
 ### Inputs
 
 | Name                            | Description                                                                                                                                                                                                                                            | Type        | Default               | Required |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- | --------------------- | -------- |
+|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ----------- |-----------------------| -------- |
 | region                          | The region in which the resources will be created.                                                                                                                                                                                                     | string      | -                     | yes      |
 | project                         | The ID of the project in which the resources will be created.                                                                                                                                                                                          | string      | -                     | yes      |
 | website_domain                  | The domain under which the Spacelift instance will be hosted. This is used for the CORS rules of one of the buckets.                                                                                                                                   | string      | -                     | yes      |
@@ -55,6 +56,7 @@ The module creates:
 | ip_cidr_range                   | The IP CIDR range for the subnetwork used by the GKE cluster                                                                                                                                                                                           | string      | 10.0.0.0/16           | no       |
 | secondary_ip_range_for_services | The secondary IP range for the subnetwork used by the GKE cluster. This range is used for services                                                                                                                                                     | string      | 192.168.16.0/22       | no       |
 | secondary_ip_range_for_pods     | The secondary IP range for the subnetwork used by the GKE cluster. This range is used for pods                                                                                                                                                         | string      | 192.168.0.0/20        | no       |
+| enable_external_workers         | Switch this to true if you want to run workers from outside of the GCP infrastructure.                                                                                                                                                                 | string      | false                 | no       |
 
 ### Outputs
 
@@ -72,8 +74,8 @@ The module creates:
 | gke_cluster_name                | Name of the GKE cluster.                                                                                                                                                                         |
 | gke_public_v4_address           | Public IPv4 address of the GKE cluster.                                                                                                                                                          |
 | gke_public_v6_address           | Public IPv6 address of the GKE cluster.                                                                                                                                                          |
-| mqtt_ipv4_address               | IPv4 address of the MQTT service. It's null if create_compute_address_for_mqtt is false. It's only useful in case the workerpool is outside the GKE cluster.                                     |
-| mqtt_ipv6_address               | IPv6 address of the MQTT service. It's null if create_compute_address_for_mqtt is false. It's only useful in case the workerpool is outside the GKE cluster.                                     |
+| mqtt_ipv4_address               | IPv4 address of the MQTT service. It's null if enable_external_workers is false. It's only useful in case the workerpool is outside the GKE cluster.                                     |
+| mqtt_ipv6_address               | IPv6 address of the MQTT service. It's null if enable_external_workers is false. It's only useful in case the workerpool is outside the GKE cluster.                                     |
 | artifact_repository_url         | URL of the Docker artifact repository.                                                                                                                                                           |
 | db_name                         | Name of the database.                                                                                                                                                                            |
 | db_root_password                | Database root password                                                                                                                                                                           |

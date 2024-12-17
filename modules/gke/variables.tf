@@ -23,29 +23,24 @@ variable "compute_network_id" {
   description = "The ID of the network to create the GKE cluster in"
 }
 
+variable "subnetwork" {
+  type = object({
+    id = string
+    self_link = string
+  })
+}
+
+variable "services_ip_range_name" {
+  type = string
+}
+
+variable "pods_ip_range_name" {
+  type = string
+}
+
 variable "compute_network_name" {
   type        = string
   description = "The name of the network to create the GKE cluster in"
-}
-
-variable "create_compute_address_for_mqtt" {
-  type        = bool
-  description = "Whether to create a compute address for MQTT. It is meant to be used by Service of type LoadBalancer from the GKE cluster to expose the embedded MQTT server to the world. This is only required if you want to run worker outside of the GKE cluster."
-}
-
-variable "ip_cidr_range" {
-  type        = string
-  description = "The IP CIDR range for the GKE cluster"
-}
-
-variable "secondary_ip_range_for_services" {
-  type        = string
-  description = "The secondary IP range for services"
-}
-
-variable "secondary_ip_range_for_pods" {
-  type        = string
-  description = "The secondary IP range for pods"
 }
 
 variable "gke_service_account_email" {
