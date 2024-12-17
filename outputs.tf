@@ -38,12 +38,12 @@ output "network_link" {
 }
 
 output "gke_subnetwork_id" {
-  value       = module.gke.gke_subnetwork_id
+  value       = module.network.subnetwork.id
   description = "Subnetwork ID of the GKE cluster"
 }
 
 output "gke_subnetwork_name" {
-  value       = module.gke.gke_subnetwork_name
+  value       = module.network.subnetwork.name
   description = "Subnetwork name of the GKE cluster"
 }
 
@@ -63,13 +63,13 @@ output "gke_public_v6_address" {
 }
 
 output "mqtt_ipv4_address" {
-  value       = module.gke.mqtt_ipv4_address
-  description = "The IPv4 address of the MQTT service. It is empty if 'create_compute_address_for_mqtt' is set to false."
+  value       = module.network.mqtt_v4_address
+  description = "The IPv4 address of the MQTT service. It is empty if 'enable_external_workers' is set to false."
 }
 
 output "mqtt_ipv6_address" {
-  value       = module.gke.mqtt_ipv6_address
-  description = "The IPv6 address of the MQTT service. It is empty if 'create_compute_address_for_mqtt' is set to false."
+  value       = module.network.mqtt_v6_address
+  description = "The IPv6 address of the MQTT service. It is empty if 'enable_external_workers' is set to false."
 }
 
 ### Artifact store ###
@@ -171,13 +171,17 @@ output "shell" {
 
     # Network
     PUBLIC_IP_NAME: module.network.gke_public_v4_name,
+    PUBLIC_IP_ADDRESS: module.network.gke_public_v4_address,
     PUBLIC_IPV6_NAME: module.network.gke_public_v6_name,
+    PUBLIC_IPV6_ADDRESS: module.network.gke_public_v6_address,
+    MQTT_IP_NAME: module.network.mqtt_v4_name,
+    MQTT_IPV6_NAME: module.network.mqtt_v6_name,
+    MQTT_BROKER_ENDPOINT: module.dns.mqtt_endpoint,
 
     # Artifacts
     ARTIFACT_REGISTRY_DOMAIN: module.artifacts.repository_domain,
-    ARTIFACT_REGISTRY_REPOSITORY: module.artifacts.repository_url,
     BACKEND_IMAGE: "${module.artifacts.repository_url}/spacelift-backend",
-    LAUNCHER_IMAGE: "${module.artifacts.repository_url}/spacelift-launcher"
+    LAUNCHER_IMAGE: "${module.artifacts.launcher_repository_url}/spacelift-launcher"
 
     # Buckets
     OBJECT_STORAGE_BUCKET_DELIVERIES=module.storage.deliveries_bucket,

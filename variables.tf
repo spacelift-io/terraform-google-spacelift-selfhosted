@@ -49,9 +49,9 @@ variable "database_deletion_protection" {
   default     = true
 }
 
-variable "create_compute_address_for_mqtt" {
+variable "enable_external_workers" {
   type        = bool
-  description = "Whether to create a compute address for MQTT. It is meant to be used by Service of type LoadBalancer from the GKE cluster to expose the embedded MQTT server to the world. This is only required if you want to run worker outside of the GKE cluster."
+  description = "Switch this to true if you want to run workers from outside of the GCP infrastructure."
   default     = false
 }
 
