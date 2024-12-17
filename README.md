@@ -33,8 +33,6 @@ The module creates:
   - a Google Artifact Registry repository for storing Docker images
 - Database resources
   - a Postgres Cloud SQL instance
-- Secret Manager resources
-  - a secret for the root password of the Cloud SQL instance. Note that we recommend using passwordless authentication via [Cloud SQL Auth Proxy](https://cloud.google.com/sql/docs/mysql/connect-auth-proxy)
 - Storage resources
   - various buckets for storing run metadata, run logs, workspaces, stack states etc.
 - GKE autopilot cluster  
