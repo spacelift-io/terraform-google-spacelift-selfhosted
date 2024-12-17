@@ -1,5 +1,5 @@
 resource "google_service_account" "gke-nodes" {
-  account_id   = "spacelift-gke-nodes"
+  account_id   = "spacelift-gke-nodes-${var.seed}"
   display_name = "A service account used by Spacelift GKE nodes"
 }
 
@@ -20,7 +20,7 @@ resource "google_project_iam_binding" "gke-nodes_artifactregistry-reader" {
 }
 
 resource "google_service_account" "spacelift-backend" {
-  account_id   = var.app_service_account_name
+  account_id   = "${var.app_service_account_name}-${var.seed}"
   display_name = "A service account used by spacelift backend pods to access GCP services"
 }
 

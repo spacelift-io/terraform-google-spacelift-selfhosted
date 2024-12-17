@@ -1,5 +1,5 @@
 resource "google_compute_network" "default" {
-  name                     = "spacelift-cluster-network"
+  name                     = "spacelift-cluster-network-${var.seed}"
   auto_create_subnetworks  = false
   enable_ula_internal_ipv6 = true
 }
