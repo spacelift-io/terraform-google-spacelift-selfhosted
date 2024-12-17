@@ -3,20 +3,16 @@ resource "google_service_account" "gke-nodes" {
   display_name = "A service account used by Spacelift GKE nodes"
 }
 
-resource "google_project_iam_binding" "gke-nodes_container-defaultNodeServiceAccount" {
-  members = [
-    "serviceAccount:${google_service_account.gke-nodes.email}",
-  ]
+resource "google_project_iam_member" "gke-nodes_container-defaultNodeServiceAccount" {
   role    = "roles/container.defaultNodeServiceAccount"
   project = var.project
+  member  = "serviceAccount:${google_service_account.gke-nodes.email}"
 }
 
-resource "google_project_iam_binding" "gke-nodes_artifactregistry-reader" {
-  members = [
-    "serviceAccount:${google_service_account.gke-nodes.email}",
-  ]
+resource "google_project_iam_member" "gke-nodes_artifactregistry-reader" {
   role    = "roles/artifactregistry.reader"
   project = var.project
+  member  = "serviceAccount:${google_service_account.gke-nodes.email}"
 }
 
 resource "google_service_account" "spacelift-backend" {
@@ -24,10 +20,8 @@ resource "google_service_account" "spacelift-backend" {
   display_name = "A service account used by spacelift backend pods to access GCP services"
 }
 
-resource "google_project_iam_binding" "spacelift-backend_service-account-token-creator" {
+resource "google_project_iam_member" "spacelift-backend_service-account-token-creator" {
   role = "roles/iam.serviceAccountTokenCreator"
-  members = [
-    "serviceAccount:${google_service_account.spacelift-backend.email}",
-  ]
   project = var.project
+  member  = "serviceAccount:${google_service_account.spacelift-backend.email}"
 }
