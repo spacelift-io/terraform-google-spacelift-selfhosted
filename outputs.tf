@@ -175,7 +175,9 @@ output "shell" {
     PUBLIC_IPV6_NAME: module.network.gke_public_v6_name,
     PUBLIC_IPV6_ADDRESS: module.network.gke_public_v6_address,
     MQTT_IP_NAME: module.network.mqtt_v4_name,
+    MQTT_IP_ADDRESS: module.network.mqtt_v4_address,
     MQTT_IPV6_NAME: module.network.mqtt_v6_name,
+    MQTT_IPV6_ADDRESS: module.network.mqtt_v6_address,
     MQTT_BROKER_ENDPOINT: module.dns.mqtt_endpoint,
 
     # Artifacts
