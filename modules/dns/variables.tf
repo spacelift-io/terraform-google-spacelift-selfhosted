@@ -1,3 +1,7 @@
+locals {
+  mqtt_service_alias = "spacelift-mqtt.${var.k8s_namespace}.svc.cluster.local."
+}
+
 variable "seed" {
   type = string
 }
@@ -7,7 +11,7 @@ variable "enable_external_workers" {
 }
 
 variable "website_domain" {
-  type = string
+  type        = string
   description = "Domain name for the Spacelift frontend without protocol (e.g. spacelift.mycompany.com)."
 }
 
@@ -25,11 +29,11 @@ variable "gke_public_v6_address" {
 }
 
 variable "mqtt_subdomain" {
-  type = string
+  type    = string
   default = "mqtt"
 }
 
-variable "mqtt_service_alias" {
-  type = string
-  default = "spacelift-mqtt.spacelift.svc.cluster.local."
+variable "k8s_namespace" {
+  type        = string
+  description = "The namespace in which the Spacelift backend is deployed to"
 }
