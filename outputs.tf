@@ -81,27 +81,27 @@ output "artifact_repository_url" {
 
 ### Database ###
 output "db_instance_name" {
-  value       = module.db.instance_name
+  value       = var.enable_database ? module.db[0].instance_name : ""
   description = "Name of the database instance"
 }
 
 output "db_connection_name" {
-  value       = module.db.database_connection_name
+  value       = var.enable_database ? module.db[0].database_connection_name : ""
   description = "Connection name of the database cluster. Needs to be passed to the Cloud SQL sidecar proxy See https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine#proxy"
 }
 
 output "db_private_ip_address" {
-  value       = module.db.database_private_ip_address
+  value       = var.enable_database ? module.db[0].database_private_ip_address : ""
   description = "Private IP address of the database instance."
 }
 
 output "db_database_name" {
-  value       = module.db.database_name
+  value       = var.enable_database ? module.db[0].database_name : ""
   description = "Internal PostgreSQL db name inside the Cloud SQL instance."
 }
 
 output "db_root_password" {
-  value       = module.db.database_root_password
+  value       = var.enable_database ? module.db[0].database_root_password : ""
   description = "The database root password"
   sensitive   = true
 }
@@ -201,10 +201,10 @@ output "shell" {
       OBJECT_STORAGE_BUCKET_UPLOADS_URL              = "https://storage.googleapis.com"
 
       # Database
-      DATABASE_NAME            = module.db.database_name
-      DATABASE_USER            = module.db.database_iam_user
-      DATABASE_CONNECTION_NAME = module.db.database_connection_name
-      DB_ROOT_PASSWORD         = module.db.database_root_password
+      DATABASE_NAME            = var.enable_database ? module.db[0].database_name : ""
+      DATABASE_USER            = var.enable_database ? module.db[0].database_iam_user : ""
+      DATABASE_CONNECTION_NAME = var.enable_database ? module.db[0].database_connection_name : ""
+      DB_ROOT_PASSWORD         = var.enable_database ? module.db[0].database_root_password : ""
 
       #GKE
       GKE_CLUSTER_NAME = module.gke.gke_cluster_name
