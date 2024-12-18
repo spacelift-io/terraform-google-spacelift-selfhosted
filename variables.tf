@@ -28,6 +28,12 @@ variable "app_service_account_name" {
   default     = "spacelift-backend"
 }
 
+variable "enable_database" {
+  type = bool
+  default = true
+  description = "Switch this to false if you don't want to deploy a new Cloud SQL instance for Spacelift."
+}
+
 variable "database_edition" {
   description = "Edition of the Cloud SQL instance. Can be either ENTERPRISE or ENTERPRISE_PLUS."
   default     = "ENTERPRISE"
