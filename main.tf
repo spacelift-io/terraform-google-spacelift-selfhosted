@@ -4,7 +4,7 @@ resource "random_id" "seed" {
 
 module "iam" {
   source = "./modules/iam"
-  seed = random_id.seed.hex
+  seed   = random_id.seed.hex
 
   app_service_account_name = var.app_service_account_name
   project                  = var.project
@@ -13,7 +13,7 @@ module "iam" {
 module "artifacts" {
   source     = "./modules/artifacts"
   depends_on = [module.iam]
-  seed = random_id.seed.hex
+  seed       = random_id.seed.hex
 
   enable_external_workers = var.enable_external_workers
 }
@@ -21,7 +21,7 @@ module "artifacts" {
 module "network" {
   source     = "./modules/network"
   depends_on = [module.iam]
-  seed = random_id.seed.hex
+  seed       = random_id.seed.hex
 
   enable_external_workers         = var.enable_external_workers
   ip_cidr_range                   = var.ip_cidr_range
@@ -32,24 +32,24 @@ module "network" {
 
 module "gke" {
   source = "./modules/gke"
-  seed = random_id.seed.hex
+  seed   = random_id.seed.hex
 
-  app_service_account_name        = var.app_service_account_name
-  backend_service_account_id      = module.iam.backend_service_account_id
-  compute_network_id              = module.network.network_id
-  subnetwork                      = module.network.subnetwork
-  pods_ip_range_name              = module.network.pods_ip_range_name
-  services_ip_range_name          = module.network.services_ip_range_name
-  compute_network_name            = module.network.network_name
-  gke_service_account_email       = module.iam.gke_service_account_email
-  k8s_namespace                   = var.k8s_namespace
-  project                         = var.project
-  region                          = var.region
+  app_service_account_name   = var.app_service_account_name
+  backend_service_account_id = module.iam.backend_service_account_id
+  compute_network_id         = module.network.network_id
+  subnetwork                 = module.network.subnetwork
+  pods_ip_range_name         = module.network.pods_ip_range_name
+  services_ip_range_name     = module.network.services_ip_range_name
+  compute_network_name       = module.network.network_name
+  gke_service_account_email  = module.iam.gke_service_account_email
+  k8s_namespace              = var.k8s_namespace
+  project                    = var.project
+  region                     = var.region
 }
 
 module "db" {
   source = "./modules/db"
-  seed = random_id.seed.hex
+  seed   = random_id.seed.hex
 
   backend_service_account_email = module.iam.backend_service_account_email
   compute_network_id            = module.network.network_id
@@ -62,7 +62,7 @@ module "db" {
 
 module "storage" {
   source = "./modules/storage"
-  seed = random_id.seed.hex
+  seed   = random_id.seed.hex
 
   backend_service_account_email = module.iam.backend_service_account_email
   cors_origins                  = ["https://${var.website_domain}"]

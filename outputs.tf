@@ -96,14 +96,14 @@ output "db_private_ip_address" {
 }
 
 output "db_database_name" {
-  value = module.db.database_name
+  value       = module.db.database_name
   description = "Internal PostgreSQL db name inside the Cloud SQL instance."
 }
 
 output "db_root_password" {
   value       = module.db.database_root_password
   description = "The database root password"
-  sensitive = true
+  sensitive   = true
 }
 
 ### Storage ###
@@ -160,51 +160,51 @@ output "deliveries_bucket" {
 
 output "shell" {
   sensitive = true
-  value = templatefile("${path.module}/env.tftpl", {env: {
-    GCP_PROJECT: var.project,
-    GCP_LOCATION: var.region,
-    SERVER_DOMAIN: var.website_domain,
-    WEBHOOKS_ENDPOINT: "https://${var.website_domain}/webhooks",
+  value = templatefile("${path.module}/env.tftpl", { env : {
+    GCP_PROJECT : var.project,
+    GCP_LOCATION : var.region,
+    SERVER_DOMAIN : var.website_domain,
+    WEBHOOKS_ENDPOINT : "https://${var.website_domain}/webhooks",
 
     # IAM
-    BACKEND_SERVICE_ACCOUNT: module.iam.backend_service_account_email,
+    BACKEND_SERVICE_ACCOUNT : module.iam.backend_service_account_email,
 
     # Network
-    PUBLIC_IP_NAME: module.network.gke_public_v4_name,
-    PUBLIC_IP_ADDRESS: module.network.gke_public_v4_address,
-    PUBLIC_IPV6_NAME: module.network.gke_public_v6_name,
-    PUBLIC_IPV6_ADDRESS: module.network.gke_public_v6_address,
-    MQTT_IP_NAME: module.network.mqtt_v4_name,
-    MQTT_IP_ADDRESS: module.network.mqtt_v4_address,
-    MQTT_IPV6_NAME: module.network.mqtt_v6_name,
-    MQTT_IPV6_ADDRESS: module.network.mqtt_v6_address,
-    MQTT_BROKER_ENDPOINT: module.dns.mqtt_endpoint,
+    PUBLIC_IP_NAME : module.network.gke_public_v4_name,
+    PUBLIC_IP_ADDRESS : module.network.gke_public_v4_address,
+    PUBLIC_IPV6_NAME : module.network.gke_public_v6_name,
+    PUBLIC_IPV6_ADDRESS : module.network.gke_public_v6_address,
+    MQTT_IP_NAME : module.network.mqtt_v4_name,
+    MQTT_IP_ADDRESS : module.network.mqtt_v4_address,
+    MQTT_IPV6_NAME : module.network.mqtt_v6_name,
+    MQTT_IPV6_ADDRESS : module.network.mqtt_v6_address,
+    MQTT_BROKER_ENDPOINT : module.dns.mqtt_endpoint,
 
     # Artifacts
-    ARTIFACT_REGISTRY_DOMAIN: module.artifacts.repository_domain,
-    BACKEND_IMAGE: "${module.artifacts.repository_url}/spacelift-backend",
-    LAUNCHER_IMAGE: "${module.artifacts.launcher_repository_url}/spacelift-launcher"
+    ARTIFACT_REGISTRY_DOMAIN : module.artifacts.repository_domain,
+    BACKEND_IMAGE : "${module.artifacts.repository_url}/spacelift-backend",
+    LAUNCHER_IMAGE : "${module.artifacts.launcher_repository_url}/spacelift-launcher"
 
     # Buckets
-    OBJECT_STORAGE_BUCKET_DELIVERIES=module.storage.deliveries_bucket,
-    OBJECT_STORAGE_BUCKET_LARGE_QUEUE_MESSAGES=module.storage.large_queue_messages_bucket,
-    OBJECT_STORAGE_BUCKET_MODULES=module.storage.modules_bucket,
-    OBJECT_STORAGE_BUCKET_POLICY_INPUTS=module.storage.policy_inputs_bucket,
-    OBJECT_STORAGE_BUCKET_RUN_LOGS=module.storage.run_logs_bucket,
-    OBJECT_STORAGE_BUCKET_STATES=module.storage.states_bucket,
-    OBJECT_STORAGE_BUCKET_USER_UPLOADED_WORKSPACES=module.storage.user_uploaded_workspaces_bucket,
-    OBJECT_STORAGE_BUCKET_WORKSPACE=module.storage.workspace_bucket,
-    OBJECT_STORAGE_BUCKET_METADATA=module.storage.metadata_bucket
-    OBJECT_STORAGE_BUCKET_UPLOADS=module.storage.uploads_bucket
-    OBJECT_STORAGE_BUCKET_UPLOADS_URL="https://storage.googleapis.com"
+    OBJECT_STORAGE_BUCKET_DELIVERIES               = module.storage.deliveries_bucket,
+    OBJECT_STORAGE_BUCKET_LARGE_QUEUE_MESSAGES     = module.storage.large_queue_messages_bucket,
+    OBJECT_STORAGE_BUCKET_MODULES                  = module.storage.modules_bucket,
+    OBJECT_STORAGE_BUCKET_POLICY_INPUTS            = module.storage.policy_inputs_bucket,
+    OBJECT_STORAGE_BUCKET_RUN_LOGS                 = module.storage.run_logs_bucket,
+    OBJECT_STORAGE_BUCKET_STATES                   = module.storage.states_bucket,
+    OBJECT_STORAGE_BUCKET_USER_UPLOADED_WORKSPACES = module.storage.user_uploaded_workspaces_bucket,
+    OBJECT_STORAGE_BUCKET_WORKSPACE                = module.storage.workspace_bucket,
+    OBJECT_STORAGE_BUCKET_METADATA                 = module.storage.metadata_bucket
+    OBJECT_STORAGE_BUCKET_UPLOADS                  = module.storage.uploads_bucket
+    OBJECT_STORAGE_BUCKET_UPLOADS_URL              = "https://storage.googleapis.com"
 
     # Database
-    DATABASE_NAME=module.db.database_name
-    DATABASE_USER=module.db.database_iam_user
-    DATABASE_CONNECTION_NAME=module.db.database_connection_name
-    DB_ROOT_PASSWORD=module.db.database_root_password
+    DATABASE_NAME            = module.db.database_name
+    DATABASE_USER            = module.db.database_iam_user
+    DATABASE_CONNECTION_NAME = module.db.database_connection_name
+    DB_ROOT_PASSWORD         = module.db.database_root_password
 
     #GKE
-    GKE_CLUSTER_NAME=module.gke.gke_cluster_name
-  }})
+    GKE_CLUSTER_NAME = module.gke.gke_cluster_name
+  } })
 }
