@@ -12,7 +12,7 @@ Check out the [Terraform](https://developer.hashicorp.com/terraform/language/bac
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v0.0.3"
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v0.0.4"
 
   region         = "europe-west1"
   project        = "spacelift-production"
