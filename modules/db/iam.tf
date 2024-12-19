@@ -37,7 +37,7 @@ resource "google_project_iam_member" "servicenetworking_role" {
 resource "google_service_networking_connection" "private_vpc_connection" {
   depends_on = [google_project_iam_member.servicenetworking_role]
 
-  network                 = var.compute_network_id
+  network                 = var.network.id
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.database-private-ip.name]
   update_on_creation_fail = true

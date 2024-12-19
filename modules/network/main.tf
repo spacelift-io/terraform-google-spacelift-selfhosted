@@ -2,10 +2,12 @@ resource "google_compute_network" "default" {
   name                     = "spacelift-cluster-network-${var.seed}"
   auto_create_subnetworks  = false
   enable_ula_internal_ipv6 = true
+  count                    = var.enabled ? 1 : 0
 }
 
 resource "google_compute_subnetwork" "default" {
-  name = "spacelift-gke-cluster-subnetwork"
+  name  = "spacelift-gke-cluster-subnetwork"
+  count = var.enabled ? 1 : 0
 
   ip_cidr_range = var.ip_cidr_range
   region        = var.region
@@ -13,7 +15,7 @@ resource "google_compute_subnetwork" "default" {
   stack_type       = "IPV4_IPV6"
   ipv6_access_type = "EXTERNAL"
 
-  network = google_compute_network.default.id
+  network = google_compute_network.default[0].id
   secondary_ip_range {
     range_name    = "services-range"
     ip_cidr_range = var.secondary_ip_range_for_services
@@ -43,7 +45,7 @@ resource "google_compute_global_address" "gke-public-v6" {
 # to expose the embedded MQTT server to the world. This is only required if we want to run worker outside of the
 # GKE cluster.
 resource "google_compute_address" "mqtt-v4" {
-  count        = var.enable_external_workers ? 1 : 0
+  count        = (var.enable_external_workers && var.enabled) ? 1 : 0
   name         = "gke-mqtt-v4-${var.seed}"
   address_type = "EXTERNAL"
   ip_version   = "IPV4"
@@ -53,10 +55,10 @@ resource "google_compute_address" "mqtt-v4" {
 # to expose the embedded MQTT server to the world. This is only required if we want to run worker outside of the
 # GKE cluster.
 resource "google_compute_address" "mqtt-v6" {
-  count              = var.enable_external_workers ? 1 : 0
+  count              = (var.enable_external_workers && var.enabled) ? 1 : 0
   name               = "gke-mqtt-v6-${var.seed}"
   address_type       = "EXTERNAL"
   ip_version         = "IPV6"
   ipv6_endpoint_type = "NETLB"
-  subnetwork         = google_compute_subnetwork.default.id
+  subnetwork         = google_compute_subnetwork.default[0].id
 }

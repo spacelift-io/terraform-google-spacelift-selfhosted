@@ -1,5 +1,6 @@
 resource "google_container_cluster" "spacelift" {
-  name = "spacelift-${var.seed}"
+  name  = "spacelift-${var.seed}"
+  count = var.enabled ? 1 : 0
 
   location                 = var.region
   enable_autopilot         = true
@@ -14,7 +15,7 @@ resource "google_container_cluster" "spacelift" {
     }
   }
 
-  network    = var.compute_network_id
+  network    = var.network.id
   subnetwork = var.subnetwork.self_link
 
   private_cluster_config {
@@ -24,8 +25,8 @@ resource "google_container_cluster" "spacelift" {
 
   ip_allocation_policy {
     stack_type                    = "IPV4_IPV6"
-    services_secondary_range_name = var.services_ip_range_name
-    cluster_secondary_range_name  = var.pods_ip_range_name
+    services_secondary_range_name = var.subnetwork.secondary_ip_range[0].range_name
+    cluster_secondary_range_name  = var.subnetwork.secondary_ip_range[1].range_name
   }
 
   # Set `deletion_protection` to `true` will ensure that one cannot
