@@ -50,7 +50,7 @@ module "gke" {
 module "db" {
   source = "./modules/db"
   seed   = random_id.seed.hex
-  count = var.enable_database ? 1 : 0
+  count  = var.enable_database ? 1 : 0
 
   backend_service_account_email = module.iam.backend_service_account_email
   compute_network_id            = module.network.network_id

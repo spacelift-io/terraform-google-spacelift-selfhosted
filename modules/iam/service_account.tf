@@ -21,7 +21,7 @@ resource "google_service_account" "spacelift-backend" {
 }
 
 resource "google_project_iam_member" "spacelift-backend_service-account-token-creator" {
-  role = "roles/iam.serviceAccountTokenCreator"
+  role    = "roles/iam.serviceAccountTokenCreator"
   project = var.project
   member  = "serviceAccount:${google_service_account.spacelift-backend.email}"
 }

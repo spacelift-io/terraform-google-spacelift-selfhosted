@@ -29,8 +29,8 @@ variable "app_service_account_name" {
 }
 
 variable "enable_database" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Switch this to false if you don't want to deploy a new Cloud SQL instance for Spacelift."
 }
 
