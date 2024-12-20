@@ -3,20 +3,24 @@ name: Build
 on:
   pull_request:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
-
 jobs:
-  ci:
+  lint:
     runs-on: ubuntu-latest
-    name: CI 👷
+    name: Lint 👷
     steps:
       - name: Check out source code
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
 
       - name: Setup OpenTofu
-        uses: opentofu/setup-opentofu@main
-    
-      - name: Initialize Tofu project
+        uses: opentofu/setup-opentofu@v1
+
+      - name: OpenTofu fmt
+        run: tofu fmt -recursive -diff -check
+        continue-on-error: true
+
+      - name: OpenTofu Init
+        id: init
         run: tofu init
+
+      - name: OpenTofu Validate
+        run: tofu validate
