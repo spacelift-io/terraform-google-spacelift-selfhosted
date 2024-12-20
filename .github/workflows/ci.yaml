@@ -16,11 +16,12 @@ jobs:
 
       - name: OpenTofu fmt
         run: tofu fmt -recursive -diff -check
-        continue-on-error: true
 
       - name: OpenTofu Init
+        if: always()
         id: init
         run: tofu init
 
       - name: OpenTofu Validate
+        if: always()
         run: tofu validate
