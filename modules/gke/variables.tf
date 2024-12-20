@@ -25,7 +25,7 @@ variable "compute_network_id" {
 
 variable "subnetwork" {
   type = object({
-    id = string
+    id        = string
     self_link = string
   })
 }

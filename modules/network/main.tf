@@ -43,20 +43,20 @@ resource "google_compute_global_address" "gke-public-v6" {
 # to expose the embedded MQTT server to the world. This is only required if we want to run worker outside of the
 # GKE cluster.
 resource "google_compute_address" "mqtt-v4" {
-  count = var.enable_external_workers ? 1 : 0
-  name = "gke-mqtt-v4-${var.seed}"
+  count        = var.enable_external_workers ? 1 : 0
+  name         = "gke-mqtt-v4-${var.seed}"
   address_type = "EXTERNAL"
-  ip_version = "IPV4"
+  ip_version   = "IPV4"
 }
 
 # This public v6 address is meant to be used by Service of type LoadBalancer from the GKE cluster
 # to expose the embedded MQTT server to the world. This is only required if we want to run worker outside of the
 # GKE cluster.
 resource "google_compute_address" "mqtt-v6" {
-  count = var.enable_external_workers ? 1 : 0
-  name = "gke-mqtt-v6-${var.seed}"
-  address_type = "EXTERNAL"
-  ip_version = "IPV6"
+  count              = var.enable_external_workers ? 1 : 0
+  name               = "gke-mqtt-v6-${var.seed}"
+  address_type       = "EXTERNAL"
+  ip_version         = "IPV6"
   ipv6_endpoint_type = "NETLB"
-  subnetwork = google_compute_subnetwork.default.id
+  subnetwork         = google_compute_subnetwork.default.id
 }

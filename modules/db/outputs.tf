@@ -24,6 +24,6 @@ output "database_connection_name" {
 }
 
 output "database_root_password" {
-  value       = random_password.db-root-password.result
+  value     = random_password.db-root-password.result
   sensitive = true
 }
