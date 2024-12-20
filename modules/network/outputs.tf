@@ -1,20 +1,9 @@
-output "network_id" {
-  value       = google_compute_network.default.id
-  description = "ID of the Compute network"
-}
-
 output "subnetwork" {
-  value = google_compute_subnetwork.default
+  value = length(google_compute_subnetwork.default) == 1 ? google_compute_subnetwork.default[0] : null
 }
 
-output "network_name" {
-  value       = google_compute_network.default.name
-  description = "Name of the Compute network"
-}
-
-output "network_link" {
-  value       = google_compute_network.default.self_link
-  description = "Self link (URI) of the Compute network"
+output "network" {
+  value = length(google_compute_network.default) == 1 ? google_compute_network.default[0] : null
 }
 
 output "gke_public_v4_address" {
@@ -55,12 +44,4 @@ output "mqtt_v6_address" {
 output "mqtt_v6_name" {
   value       = length(google_compute_address.mqtt-v6) == 1 ? google_compute_address.mqtt-v6[0].name : ""
   description = "Public IPv6 address for MQTT traffic."
-}
-
-output "services_ip_range_name" {
-  value = google_compute_subnetwork.default.secondary_ip_range[0].range_name
-}
-
-output "pods_ip_range_name" {
-  value = google_compute_subnetwork.default.secondary_ip_range[1].range_name
 }

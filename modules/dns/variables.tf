@@ -15,9 +15,11 @@ variable "website_domain" {
   description = "Domain name for the Spacelift frontend without protocol (e.g. spacelift.mycompany.com)."
 }
 
-variable "compute_network_id" {
-  type        = string
-  description = "The ID of the network to create the GKE cluster in"
+variable "network" {
+  type = object({
+    id : string,
+  })
+  description = "The network to create the GKE cluster in."
 }
 
 variable "gke_public_v4_address" {

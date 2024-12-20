@@ -1,5 +1,5 @@
 output "gke_service_account_email" {
-  value       = google_service_account.gke-nodes.email
+  value       = length(google_service_account.gke-nodes) == 1 ? google_service_account.gke-nodes[0].email : ""
   description = "The email of the service account used by GKE nodes"
 }
 

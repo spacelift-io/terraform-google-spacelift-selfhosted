@@ -34,6 +34,18 @@ variable "enable_database" {
   description = "Switch this to false if you don't want to deploy a new Cloud SQL instance for Spacelift."
 }
 
+variable "enable_gke" {
+  type        = bool
+  default     = true
+  description = "Switch this to false to disable deployment of a GKE cluster."
+}
+
+variable "enable_network" {
+  type        = bool
+  default     = true
+  description = "Switch this to false to disable creating a new VPC. In that case you need to reference network and subnetwork variables."
+}
+
 variable "database_edition" {
   description = "Edition of the Cloud SQL instance. Can be either ENTERPRISE or ENTERPRISE_PLUS."
   default     = "ENTERPRISE"
@@ -77,4 +89,35 @@ variable "secondary_ip_range_for_pods" {
   type        = string
   description = "The secondary IP range for the subnetwork used by the GKE cluster. This range is used for pods"
   default     = "192.168.0.0/20"
+}
+
+variable "node_service_account" {
+  type = object({
+    email : string,
+  })
+  default     = null
+  description = "If GKE is disabled, provide your existing cluster default node service account here. This is used to grant privileges of your cluster to pull docker images."
+}
+
+variable "network" {
+  type = object({
+    id : string,
+    name : string,
+    self_link : string,
+  })
+  default     = null
+  description = "If enable_network is set to false, pass a reference to an existing google_compute_network"
+}
+
+variable "subnetwork" {
+  type = object({
+    id = string
+    name : string,
+    self_link = string
+    secondary_ip_range = list(object({
+      range_name : string,
+    }))
+  })
+  description = "If enable_network is set to false, pass a reference to an existing google_compute_subnetwork"
+  default     = null
 }

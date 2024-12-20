@@ -23,28 +23,28 @@ output "backend_service_account_email" {
 ### Network ###
 
 output "network_id" {
-  value       = module.network.network_id
-  description = "ID of the network the Spacelift infrastructure is deployed in"
+  value       = local.network != null ? local.network.id : ""
+  description = "ID of the network the Spacelift infrastructure is deployed in. Empty if external network provided."
 }
 
 output "network_name" {
-  value       = module.network.network_name
-  description = "Name of the network the Spacelift infrastructure is deployed in"
+  value       = local.network != null ? local.network.name : ""
+  description = "Name of the network the Spacelift infrastructure is deployed in. Empty if external network provided."
 }
 
 output "network_link" {
-  value       = module.network.network_link
-  description = "Self link (URI) of the network the Spacelift infrastructure is deployed in"
+  value       = local.network != null ? local.network.self_link : ""
+  description = "Self link (URI) of the network the Spacelift infrastructure is deployed in. Empty if external network provided."
 }
 
 output "gke_subnetwork_id" {
-  value       = module.network.subnetwork.id
-  description = "Subnetwork ID of the GKE cluster"
+  value       = local.subnetwork != null ? local.subnetwork.id : ""
+  description = "Subnetwork ID of the GKE cluster. Empty if external subnetwork provided."
 }
 
 output "gke_subnetwork_name" {
-  value       = module.network.subnetwork.name
-  description = "Subnetwork name of the GKE cluster"
+  value       = local.subnetwork != null ? local.subnetwork.name : ""
+  description = "Subnetwork name of the GKE cluster. Empty if external subnetwork provided."
 }
 
 output "gke_cluster_name" {

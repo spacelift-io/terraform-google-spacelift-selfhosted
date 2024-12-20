@@ -2,6 +2,11 @@ variable "seed" {
   type = string
 }
 
+variable "enabled" {
+  type        = bool
+  description = "Switch this to false to disable creating a new VPC."
+}
+
 variable "enable_external_workers" {
   type = bool
 }

@@ -57,7 +57,8 @@ The module creates:
 | ip_cidr_range                   | The IP CIDR range for the subnetwork used by the GKE cluster.                                                                                            | string      | 10.0.0.0/16           | no       |
 | secondary_ip_range_for_services | The secondary IP range for the subnetwork used by the GKE cluster. This range is used for services.                                                      | string      | 192.168.16.0/22       | no       |
 | secondary_ip_range_for_pods     | The secondary IP range for the subnetwork used by the GKE cluster. This range is used for pods.                                                          | string      | 192.168.0.0/20        | no       |
-
+| enable_network                  | Switch this to false to disable creating a new VPC. In that case you need to reference `network` and `subnetwork` variables.                             | bool        | true                  | no       |
+| enable_gke                      | Switch this to false to disable deployment of a GKE cluster                                                                                              | bool        | true                  | no       |
 
 ### Outputs
 
@@ -94,6 +95,114 @@ The module creates:
 | workspace_bucket                | Name of the bucket used for storing stack workspace data.                                                                                                                                        |
 | deliveries_bucket               | Name of the bucket used for storing audit trail delivery data.                                                                                                                                   |
 | shell                           | A list of shell variables to export to continue with the install process.                                                                                                                        |
+
+### Examples
+
+#### Default
+
+This deploys a new VPC, a new Cloud SQL instance and a GKE cluster
+
+```hcl
+module "spacelift" {
+  source  = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v0.0.4"
+
+  region         = var.region
+  project        = var.project
+  website_domain = var.app_domain
+  database_tier  = "db-f1-micro"
+  labels         = {"app" = "spacelift"}
+}
+```
+
+### Deploy a cluster in an existing network
+
+```hcl
+resource "google_compute_network" "default" {
+  name = "test"
+  auto_create_subnetworks  = false
+  enable_ula_internal_ipv6 = true
+}
+
+resource "google_compute_subnetwork" "default" {
+  name    = "test"
+  network = google_compute_network.default.id
+  region        = var.region
+  ip_cidr_range = "10.0.0.0/16"
+  stack_type       = "IPV4_IPV6"
+  ipv6_access_type = "EXTERNAL"
+  secondary_ip_range {
+    range_name = "services"
+    ip_cidr_range = "192.168.16.0/22"
+  }
+  secondary_ip_range {
+    range_name = "pods"
+    ip_cidr_range = "192.168.0.0/20"
+  }
+}
+
+module "spacelift" {
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v0.0.4"
+
+  region         = var.region
+  project        = var.project
+  website_domain = var.app_domain
+  database_tier  = "db-f1-micro"
+
+  enable_network = false
+  network = google_compute_network.default
+  subnetwork = google_compute_subnetwork.default
+}
+```
+
+#### Do not create a VPC and GKE cluster
+
+```hcl
+resource "google_compute_network" "default" {
+  name = "test"
+  auto_create_subnetworks  = false
+  enable_ula_internal_ipv6 = true
+}
+
+resource "google_service_account" "gke-node-service-account" {
+  account_id = "test-elie"
+}
+
+module "spacelift" {
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v0.0.4"
+
+  region         = var.region
+  project        = var.project
+  website_domain = var.app_domain
+  database_tier  = "db-f1-micro"
+
+  enable_gke = false
+  enable_network = false
+  node_service_account = google_service_account.gke-node-service-account
+  network = google_compute_network.default
+}
+```
+
+#### Do not create DB, VPC and GKE cluster
+
+```hcl
+resource "google_service_account" "gke-node-service-account" {
+  account_id = "test-elie"
+}
+
+module "spacelift" {
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v0.0.4"
+
+  region         = var.region
+  project        = var.project
+  website_domain = var.app_domain
+  database_tier  = "db-f1-micro"
+
+  enable_database      = false
+  enable_gke           = false
+  enable_network       = false
+  node_service_account = google_service_account.gke-node-service-account
+}
+```
 
 ## 🚀 Release
 

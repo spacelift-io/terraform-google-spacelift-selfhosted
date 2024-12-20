@@ -26,14 +26,12 @@ variable "project" {
   description = "Identifier of the GCP project to deploy the DB in"
 }
 
-variable "network_link" {
-  type        = string
-  description = "The URI of the network to which the database instance is connected"
-}
-
-variable "compute_network_id" {
-  type        = string
-  description = "The ID of the network to which the database instance is connected"
+variable "network" {
+  type = object({
+    id : string,
+    self_link : string,
+  })
+  description = "The network to which the database instance is connected"
 }
 
 variable "seed" {
