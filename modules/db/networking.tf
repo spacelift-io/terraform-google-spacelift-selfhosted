@@ -3,5 +3,5 @@ resource "google_compute_global_address" "database-private-ip" {
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
-  network       = var.compute_network_id
+  network       = var.network.id
 }

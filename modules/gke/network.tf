@@ -6,8 +6,9 @@ module "gke-router" {
   project = var.project
   region  = var.region
   name    = "gke-router-${var.seed}"
+  count   = var.enabled ? 1 : 0
 
-  network = var.compute_network_name
+  network = var.network.name
   nats = [{
     name                               = "gke-pods-nat"
     source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
@@ -16,7 +17,7 @@ module "gke-router" {
         name                    = var.subnetwork.id
         source_ip_ranges_to_nat = ["PRIMARY_IP_RANGE", "LIST_OF_SECONDARY_IP_RANGES"]
         secondary_ip_range_names = [
-          var.pods_ip_range_name,
+          var.subnetwork.secondary_ip_range[1].range_name,
         ]
       }
     ]

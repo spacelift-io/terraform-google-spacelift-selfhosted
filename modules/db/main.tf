@@ -23,7 +23,7 @@ resource "google_sql_database_instance" "spacelift" {
     }
     ip_configuration {
       ipv4_enabled    = true
-      private_network = var.network_link
+      private_network = var.network.self_link
     }
     database_flags {
       name  = "cloudsql.iam_authentication"
