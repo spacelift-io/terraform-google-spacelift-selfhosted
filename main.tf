@@ -3,8 +3,8 @@ resource "random_id" "seed" {
 }
 
 locals {
-  network                   = var.enable_network ? module.network.network : var.network
-  subnetwork                = var.enable_network ? module.network.subnetwork : var.subnetwork
+  network                   = [module.network.network, var.network][var.enable_network ? 0 : 1]
+  subnetwork                = [module.network.subnetwork, var.subnetwork][var.enable_network ? 0 : 1]
   gke_service_account_email = var.enable_gke ? module.iam.gke_service_account_email : var.node_service_account.email
 }
 
