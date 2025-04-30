@@ -162,52 +162,76 @@ output "shell" {
   sensitive = true
   value = templatefile("${path.module}/env.tftpl", {
     env : {
+      SPACELIFT_VERSION : var.spacelift_version != null ? var.spacelift_version : "",
       GCP_PROJECT : var.project,
       GCP_LOCATION : var.region,
-      SERVER_DOMAIN : var.website_domain,
-      WEBHOOKS_ENDPOINT : "https://${var.website_domain}/webhooks",
       K8S_NAMESPACE : var.k8s_namespace,
 
-      # IAM
-      BACKEND_SERVICE_ACCOUNT : module.iam.backend_service_account_email,
-
       # Network
-      PUBLIC_IP_NAME : module.network.gke_public_v4_name,
       PUBLIC_IP_ADDRESS : module.network.gke_public_v4_address,
-      PUBLIC_IPV6_NAME : module.network.gke_public_v6_name,
       PUBLIC_IPV6_ADDRESS : module.network.gke_public_v6_address,
-      MQTT_IP_NAME : module.network.mqtt_v4_name,
       MQTT_IP_ADDRESS : module.network.mqtt_v4_address,
-      MQTT_IPV6_NAME : module.network.mqtt_v6_name,
       MQTT_IPV6_ADDRESS : module.network.mqtt_v6_address,
-      MQTT_BROKER_ENDPOINT : module.dns.mqtt_endpoint,
 
       # Artifacts
       ARTIFACT_REGISTRY_DOMAIN : module.artifacts.repository_domain,
       BACKEND_IMAGE : "${module.artifacts.repository_url}/spacelift-backend",
       LAUNCHER_IMAGE : "${module.artifacts.launcher_repository_url}/spacelift-launcher"
 
-      # Buckets
-      OBJECT_STORAGE_BUCKET_DELIVERIES               = module.storage.deliveries_bucket,
-      OBJECT_STORAGE_BUCKET_LARGE_QUEUE_MESSAGES     = module.storage.large_queue_messages_bucket,
-      OBJECT_STORAGE_BUCKET_MODULES                  = module.storage.modules_bucket,
-      OBJECT_STORAGE_BUCKET_POLICY_INPUTS            = module.storage.policy_inputs_bucket,
-      OBJECT_STORAGE_BUCKET_RUN_LOGS                 = module.storage.run_logs_bucket,
-      OBJECT_STORAGE_BUCKET_STATES                   = module.storage.states_bucket,
-      OBJECT_STORAGE_BUCKET_USER_UPLOADED_WORKSPACES = module.storage.user_uploaded_workspaces_bucket,
-      OBJECT_STORAGE_BUCKET_WORKSPACE                = module.storage.workspace_bucket,
-      OBJECT_STORAGE_BUCKET_METADATA                 = module.storage.metadata_bucket
-      OBJECT_STORAGE_BUCKET_UPLOADS                  = module.storage.uploads_bucket
-      OBJECT_STORAGE_BUCKET_UPLOADS_URL              = "https://storage.googleapis.com"
-
       # Database
-      DATABASE_NAME            = var.enable_database ? module.db[0].database_name : ""
-      DATABASE_USER            = var.enable_database ? module.db[0].database_iam_user : ""
-      DATABASE_CONNECTION_NAME = var.enable_database ? module.db[0].database_connection_name : ""
-      DB_ROOT_PASSWORD         = var.enable_database ? module.db[0].database_root_password : ""
+      DATABASE_NAME    = var.enable_database ? module.db[0].database_name : ""
+      DATABASE_USER    = var.enable_database ? module.db[0].database_iam_user : ""
+      DB_ROOT_PASSWORD = var.enable_database ? module.db[0].database_root_password : ""
 
       #GKE
       GKE_CLUSTER_NAME = module.gke.gke_cluster_name
     },
+  })
+}
+
+output "kubernetes_secrets" {
+  sensitive   = true
+  description = "Kubernetes secrets required for the Spacelift services. This output is just included as a convenience for use as part of the EKS getting started guide."
+  value = templatefile("${path.module}/kubernetes-secrets.tftpl", {
+    NAMESPACE                                      = var.k8s_namespace
+    SERVER_DOMAIN                                  = var.website_domain
+    MQTT_BROKER_DOMAIN                             = module.dns.mqtt_endpoint
+    GCP_PROJECT                                    = var.project,
+    OBJECT_STORAGE_BUCKET_DELIVERIES               = module.storage.deliveries_bucket
+    OBJECT_STORAGE_BUCKET_LARGE_QUEUE_MESSAGES     = module.storage.large_queue_messages_bucket
+    OBJECT_STORAGE_BUCKET_MODULES                  = module.storage.modules_bucket
+    OBJECT_STORAGE_BUCKET_POLICY_INPUTS            = module.storage.policy_inputs_bucket
+    OBJECT_STORAGE_BUCKET_RUN_LOGS                 = module.storage.run_logs_bucket
+    OBJECT_STORAGE_BUCKET_STATES                   = module.storage.states_bucket
+    OBJECT_STORAGE_BUCKET_USER_UPLOADED_WORKSPACES = module.storage.user_uploaded_workspaces_bucket
+    OBJECT_STORAGE_BUCKET_WORKSPACE                = module.storage.workspace_bucket
+    OBJECT_STORAGE_BUCKET_METADATA                 = module.storage.metadata_bucket
+    OBJECT_STORAGE_BUCKET_UPLOADS                  = module.storage.uploads_bucket
+    DATABASE_URL                                   = var.enable_database ? "postgres://${module.db[0].database_iam_user}@127.0.0.1/${module.db[0].database_name}" : ""
+    DATABASE_READ_ONLY_URL                         = var.enable_database ? "postgres://${module.db[0].database_iam_user}@127.0.0.1/${module.db[0].database_name}" : ""
+    LICENSE_TOKEN                                  = var.license_token != null ? var.license_token : ""
+    ENCRYPTION_RSA_PRIVATE_KEY                     = var.encryption_rsa_private_key
+    SPACELIFT_PUBLIC_API                           = var.spacelift_public_api != null ? var.spacelift_public_api : ""
+    WEBHOOKS_ENDPOINT                              = "https://${var.website_domain}/webhooks"
+    ADMIN_USERNAME                                 = var.admin_username != null ? var.admin_username : ""
+    ADMIN_PASSWORD                                 = var.admin_password != null ? var.admin_password : ""
+    LAUNCHER_IMAGE                                 = "${module.artifacts.launcher_repository_url}/spacelift-launcher"
+    LAUNCHER_IMAGE_TAG                             = var.spacelift_version != null ? var.spacelift_version : ""
+  })
+}
+
+output "helm_values" {
+  description = "Generates a Helm values.yaml file that can be used when deploying Spacelift. This output is just included as a convenience for use as part of the EKS getting started guide."
+  value = templatefile("${path.module}/helm-values.tftpl", {
+    SERVER_DOMAIN               = var.website_domain
+    BACKEND_IMAGE               = "${module.artifacts.repository_url}/spacelift-backend"
+    SPACELIFT_VERSION           = var.spacelift_version != null ? var.spacelift_version : ""
+    SERVER_SERVICE_ACCOUNT_NAME = module.iam.backend_service_account_email
+    DATABASE_CONNECTION_NAME    = var.enable_database ? module.db[0].database_connection_name : ""
+    PUBLIC_IP_NAME              = module.network.gke_public_v4_name
+    PUBLIC_IPV6_NAME            = module.network.gke_public_v6_name
+    EXTERNAL_WORKERS_ENABLED    = var.enable_external_workers
+    MQTT_IP_NAME                = module.network.mqtt_v4_name
+    MQTT_IPV6_NAME              = module.network.mqtt_v6_name
   })
 }
