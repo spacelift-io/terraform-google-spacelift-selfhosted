@@ -1,0 +1,44 @@
+shared:
+  serverHostname: "${SERVER_DOMAIN}"
+  image: "${BACKEND_IMAGE}:${SPACELIFT_VERSION}"
+  secretRef: "spacelift-shared"
+
+serviceAccount:
+  annotations:
+    iam.gke.io/gcp-service-account: "${SERVER_SERVICE_ACCOUNT_NAME}"
+
+server:
+  secretRef: "spacelift-server"
+
+drain:
+  secretRef: "spacelift-drain"
+
+cloudSqlProxy:
+  enabled: true
+  dbConnectionName: "${DATABASE_CONNECTION_NAME}"
+
+ingress:
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "${PUBLIC_IP_NAME}"
+
+ingressV6:
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "${PUBLIC_IPV6_NAME}"
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+%{ if EXTERNAL_WORKERS_ENABLED ~}
+# When connecting workers that are running outside your GKE cluster to Spacelift, we need to
+# expose the MQTT broker using an load balancer. We do this by configuring the MQTT Service as follows:
+mqttService:
+  type: "LoadBalancer"
+  additionalSpec:
+    externalTrafficPolicy: Local
+    ipFamilyPolicy: PreferDualStack
+    ipFamilies:
+      - IPv4
+      - IPv6
+  annotations:
+    cloud.google.com/l4-rbs: "enabled"
+    networking.gke.io/load-balancer-ip-addresses: "${MQTT_IP_NAME},${MQTT_IPV6_NAME}"
+%{ endif ~}
