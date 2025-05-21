@@ -1,13 +1,10 @@
 version: 2
-module_version: "0.0.7"
+module_version: "0.0.8"
 
 tests:
   - name: Test infrastructure creation
     runner_image: public.ecr.aws/spacelift/runner-terraform:gcp-latest
+    project_root: "examples/simple"
     environment:
       TF_VAR_region: europe-west3
       TF_VAR_project: self-hosted-v3-testing
-      TF_VAR_database_tier : db-f1-micro
-      TF_VAR_website_domain: spacelift.mycorp.com
-      TF_VAR_labels: '{"environment":"tf-module-testing"}'
-      TF_VAR_database_deletion_protection: false
