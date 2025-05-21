@@ -17,7 +17,6 @@ module "spacelift" {
   region         = "europe-west1"
   project        = "spacelift-production"
   website_domain = "spacelift.mycompany.com"
-  labels         = {"app" = "spacelift"}
 }
 ```
 
@@ -57,7 +56,6 @@ module "spacelift" {
   project        = var.project
   website_domain = var.app_domain
   database_tier  = "db-f1-micro"
-  labels         = {"app" = "spacelift"}
 }
 ```
 
