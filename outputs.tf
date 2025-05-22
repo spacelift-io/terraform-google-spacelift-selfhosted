@@ -179,9 +179,10 @@ output "shell" {
       LAUNCHER_IMAGE : "${module.artifacts.launcher_repository_url}/spacelift-launcher"
 
       # Database
-      DATABASE_NAME    = var.enable_database ? module.db[0].database_name : ""
-      DATABASE_USER    = var.enable_database ? module.db[0].database_iam_user : ""
-      DB_ROOT_PASSWORD = var.enable_database ? module.db[0].database_root_password : ""
+      DATABASE_NAME            = var.enable_database ? module.db[0].database_name : ""
+      DATABASE_USER            = var.enable_database ? module.db[0].database_iam_user : ""
+      DB_ROOT_PASSWORD         = var.enable_database ? module.db[0].database_root_password : ""
+      DATABASE_CONNECTION_NAME = var.enable_database ? module.db[0].database_connection_name : ""
 
       #GKE
       GKE_CLUSTER_NAME = module.gke.gke_cluster_name
