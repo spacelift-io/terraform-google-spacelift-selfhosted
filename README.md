@@ -12,7 +12,7 @@ Check out the [Terraform](https://developer.hashicorp.com/terraform/language/bac
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v0.0.6"
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v1.0.0"
 
   region         = "europe-west1"
   project        = "spacelift-production"
@@ -50,7 +50,7 @@ This deploys a new VPC, a new Cloud SQL instance and a GKE cluster
 
 ```hcl
 module "spacelift" {
-  source  = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v0.0.6"
+  source  = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v1.0.0"
 
   region         = var.region
   project        = var.project
@@ -86,7 +86,7 @@ resource "google_compute_subnetwork" "default" {
 }
 
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v0.0.6"
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v1.0.0"
 
   region         = var.region
   project        = var.project
@@ -113,7 +113,7 @@ resource "google_service_account" "gke-node-service-account" {
 }
 
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v0.0.6"
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v1.0.0"
 
   region         = var.region
   project        = var.project
@@ -135,7 +135,7 @@ resource "google_service_account" "gke-node-service-account" {
 }
 
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v0.0.6"
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v1.0.0"
 
   region         = var.region
   project        = var.project
