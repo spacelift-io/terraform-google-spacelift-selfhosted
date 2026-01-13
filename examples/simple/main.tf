@@ -2,7 +2,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 6.0"
+      version = "~> 7.0"
     }
 
     random = {
@@ -37,4 +37,5 @@ module "spacelift" {
   website_domain               = "spacelift.mycorp.com"
   database_tier                = "db-f1-micro"
   database_deletion_protection = false
+  database_version             = "POSTGRES_17"
 }

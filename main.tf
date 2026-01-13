@@ -63,6 +63,7 @@ module "db" {
   database_deletion_protection  = var.database_deletion_protection
   database_edition              = var.database_edition
   database_tier                 = var.database_tier
+  database_version              = var.database_version
   network                       = local.network
   project                       = var.project
 }

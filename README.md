@@ -2,6 +2,9 @@
 
 This module creates a base infrastructure for a self-hosted Spacelift instance on Google Cloud Platform.
 
+> [!IMPORTANT]
+> **Breaking change in v2.0.0:** The database version is now configurable and must be explicitly defined (no longer hardcoded to `POSTGRES_14`). This enables you to upgrade to newer PostgreSQL versions. See the [Terraform resource documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance) for available versions.
+
 ## State storage
 
 Check out the [Terraform](https://developer.hashicorp.com/terraform/language/backend) or the [OpenTofu](https://opentofu.org/docs/language/settings/backends/configuration/) backend documentation for more information on how to configure the state storage.
@@ -12,11 +15,12 @@ Check out the [Terraform](https://developer.hashicorp.com/terraform/language/bac
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v1.0.0"
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v1.1.0"
 
-  region         = "europe-west1"
-  project        = "spacelift-production"
-  website_domain = "spacelift.mycompany.com"
+  region           = "europe-west1"
+  project          = "spacelift-production"
+  website_domain   = "spacelift.mycompany.com"
+  database_version = "POSTGRES_17"
 }
 ```
 
@@ -50,12 +54,13 @@ This deploys a new VPC, a new Cloud SQL instance and a GKE cluster
 
 ```hcl
 module "spacelift" {
-  source  = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v1.0.0"
+  source  = "github.com/spacelift-io/terraform-google-spacelift-selfhosted"
 
-  region         = var.region
-  project        = var.project
-  website_domain = var.app_domain
-  database_tier  = "db-f1-micro"
+  region           = var.region
+  project          = var.project
+  website_domain   = var.app_domain
+  database_tier    = "db-f1-micro"
+  database_version = "POSTGRES_17"
 }
 ```
 
@@ -86,12 +91,13 @@ resource "google_compute_subnetwork" "default" {
 }
 
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v1.0.0"
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted"
 
-  region         = var.region
-  project        = var.project
-  website_domain = var.app_domain
-  database_tier  = "db-f1-micro"
+  region           = var.region
+  project          = var.project
+  website_domain   = var.app_domain
+  database_tier    = "db-f1-micro"
+  database_version = "POSTGRES_17"
 
   enable_network = false
   network = google_compute_network.default
@@ -113,12 +119,13 @@ resource "google_service_account" "gke-node-service-account" {
 }
 
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v1.0.0"
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted"
 
-  region         = var.region
-  project        = var.project
-  website_domain = var.app_domain
-  database_tier  = "db-f1-micro"
+  region           = var.region
+  project          = var.project
+  website_domain   = var.app_domain
+  database_tier    = "db-f1-micro"
+  database_version = "POSTGRES_17"
 
   enable_gke = false
   enable_network = false
@@ -135,12 +142,11 @@ resource "google_service_account" "gke-node-service-account" {
 }
 
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v1.0.0"
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted"
 
   region         = var.region
   project        = var.project
   website_domain = var.app_domain
-  database_tier  = "db-f1-micro"
 
   enable_database      = false
   enable_gke           = false

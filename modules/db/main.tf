@@ -6,7 +6,7 @@ resource "google_sql_database_instance" "spacelift" {
   depends_on = [google_service_networking_connection.private_vpc_connection]
 
   name             = "spacelift-${var.seed}"
-  database_version = "POSTGRES_14"
+  database_version = var.database_version
 
   # Please note that Spacelift application is authenticating passwordless via IAM,
   # but this is a mandatory parameter.
