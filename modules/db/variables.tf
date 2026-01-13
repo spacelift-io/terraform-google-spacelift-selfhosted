@@ -11,6 +11,11 @@ variable "database_edition" {
   }
 }
 
+variable "database_version" {
+  type        = string
+  description = "Database version for Cloud SQL instance (e.g., POSTGRES_14, POSTGRES_15, POSTGRES_16)"
+}
+
 variable "database_deletion_protection" {
   type        = bool
   description = "Whether the database should have deletion protection enabled"

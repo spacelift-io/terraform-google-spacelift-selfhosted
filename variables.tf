@@ -55,6 +55,11 @@ variable "database_tier" {
   default     = "db-n1-standard-8"
 }
 
+variable "database_version" {
+  description = "Database version for Cloud SQL instance (e.g., POSTGRES_16, POSTGRES_17)"
+  default     = null
+}
+
 variable "database_deletion_protection" {
   type        = bool
   description = "Whether the database should have deletion protection enabled"

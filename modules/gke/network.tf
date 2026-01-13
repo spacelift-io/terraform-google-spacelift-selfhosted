@@ -1,12 +1,12 @@
 # This module create a Cloud router & Cloud NAT is used to allow outbound traffic from k8s pods
 # Only SNAT is allowed here, this should not be used for routing incoming traffic to pods.
 module "gke-router" {
-  source  = "terraform-google-modules/cloud-router/google"
-  version = "~> 6.0"
-  project = var.project
-  region  = var.region
-  name    = "gke-router-${var.seed}"
-  count   = var.enabled ? 1 : 0
+  source     = "terraform-google-modules/cloud-router/google"
+  version    = "~> 8.0"
+  project_id = var.project
+  region     = var.region
+  name       = "gke-router-${var.seed}"
+  count      = var.enabled ? 1 : 0
 
   network = var.network.name
   nats = [{
