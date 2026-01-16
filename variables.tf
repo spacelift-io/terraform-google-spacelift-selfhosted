@@ -159,3 +159,9 @@ variable "admin_password" {
   default     = ""
   sensitive   = true
 }
+
+variable "vcs_gateway_domain" {
+  type        = string
+  description = "Domain for the VCS Gateway endpoint (e.g., vcs-gateway.spacelift.mycompany.com). Leave empty to disable VCS Gateway."
+  default     = ""
+}

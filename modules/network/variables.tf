@@ -30,3 +30,7 @@ variable "secondary_ip_range_for_pods" {
   type        = string
   description = "The secondary IP range for pods"
 }
+
+variable "enable_vcs_gateway" {
+  type = bool
+}

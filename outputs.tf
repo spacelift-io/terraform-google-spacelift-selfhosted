@@ -72,6 +72,16 @@ output "mqtt_ipv6_address" {
   description = "The IPv6 address of the MQTT service. It is empty if 'enable_external_workers' is set to false."
 }
 
+output "vcs_gateway_ipv4_address" {
+  value       = module.network.vcs_gateway_v4_address
+  description = "The IPv4 address of the VCS Gateway service. Empty if 'enable_vcs_gateway' is false."
+}
+
+output "vcs_gateway_ipv6_address" {
+  value       = module.network.vcs_gateway_v6_address
+  description = "The IPv6 address of the VCS Gateway service. Empty if 'enable_vcs_gateway' is false."
+}
+
 ### Artifact store ###
 
 output "artifact_repository_url" {
@@ -172,6 +182,8 @@ output "shell" {
       PUBLIC_IPV6_ADDRESS : module.network.gke_public_v6_address,
       MQTT_IP_ADDRESS : module.network.mqtt_v4_address,
       MQTT_IPV6_ADDRESS : module.network.mqtt_v6_address,
+      VCS_GATEWAY_IP_ADDRESS : module.network.vcs_gateway_v4_address,
+      VCS_GATEWAY_IPV6_ADDRESS : module.network.vcs_gateway_v6_address,
 
       # Artifacts
       ARTIFACT_REGISTRY_DOMAIN : module.artifacts.repository_domain,
@@ -218,6 +230,7 @@ output "kubernetes_secrets" {
     ADMIN_PASSWORD                                 = var.admin_password != null ? var.admin_password : ""
     LAUNCHER_IMAGE                                 = "${module.artifacts.launcher_repository_url}/spacelift-launcher"
     LAUNCHER_IMAGE_TAG                             = var.spacelift_version != null ? var.spacelift_version : ""
+    VCS_GATEWAY_ENDPOINT                           = var.vcs_gateway_domain != "" ? "${var.vcs_gateway_domain}:443" : ""
   })
 }
 
@@ -234,5 +247,9 @@ output "helm_values" {
     EXTERNAL_WORKERS_ENABLED    = var.enable_external_workers
     MQTT_IP_NAME                = module.network.mqtt_v4_name
     MQTT_IPV6_NAME              = module.network.mqtt_v6_name
+    VCS_GATEWAY_ENABLED         = var.vcs_gateway_domain != ""
+    VCS_GATEWAY_DOMAIN          = var.vcs_gateway_domain
+    VCS_GATEWAY_IP_NAME         = module.network.vcs_gateway_v4_name
+    VCS_GATEWAY_IPV6_NAME       = module.network.vcs_gateway_v6_name
   })
 }

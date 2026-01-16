@@ -155,6 +155,10 @@ module "spacelift" {
 }
 ```
 
+### With VCS Gateway
+
+See the [with-vcs-gateway example](./examples/with-vcs-gateway) for deploying Spacelift with VCS Gateway enabled, which allows connecting remote VCS agents to Spacelift.
+
 ## 🚀 Release
 
 We have a [GitHub workflow](./.github/workflows/release.yaml) to automatically create a tag and a release based on the version number in [`.spacelift/config.yml`](./.spacelift/config.yml) file.

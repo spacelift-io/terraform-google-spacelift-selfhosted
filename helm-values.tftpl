@@ -42,3 +42,20 @@ mqttService:
     cloud.google.com/l4-rbs: "enabled"
     networking.gke.io/load-balancer-ip-addresses: "${MQTT_IP_NAME},${MQTT_IPV6_NAME}"
 %{ endif ~}
+
+%{ if VCS_GATEWAY_ENABLED ~}
+vcsGateway:
+  enabled: true
+  domain: "${VCS_GATEWAY_DOMAIN}"
+  service:
+    type: "LoadBalancer"
+    additionalSpec:
+      externalTrafficPolicy: Local
+      ipFamilyPolicy: PreferDualStack
+      ipFamilies:
+        - IPv4
+        - IPv6
+    annotations:
+      cloud.google.com/l4-rbs: "enabled"
+      networking.gke.io/load-balancer-ip-addresses: "${VCS_GATEWAY_IP_NAME},${VCS_GATEWAY_IPV6_NAME}"
+%{ endif ~}
