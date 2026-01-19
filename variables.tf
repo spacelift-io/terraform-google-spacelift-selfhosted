@@ -162,6 +162,6 @@ variable "admin_password" {
 
 variable "vcs_gateway_domain" {
   type        = string
-  description = "Domain for the VCS Gateway endpoint (e.g., vcs-gateway.spacelift.mycompany.com). Leave empty to disable VCS Gateway."
+  description = "Domain for the VCS Gateway endpoint without protocol (e.g., vcs-gateway.spacelift.mycompany.com). Leave empty to disable VCS Gateway."
   default     = ""
 }

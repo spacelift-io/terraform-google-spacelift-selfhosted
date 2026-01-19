@@ -63,18 +63,10 @@ resource "google_compute_address" "mqtt-v6" {
   subnetwork         = google_compute_subnetwork.default[0].id
 }
 
-resource "google_compute_address" "vcs-gateway-v4" {
-  count        = (var.enable_vcs_gateway && var.enabled) ? 1 : 0
-  name         = "gke-vcs-gateway-v4-${var.seed}"
+# Global IPv4 address for VCS Gateway Ingress
+resource "google_compute_global_address" "vcs-gateway" {
+  count        = var.enable_vcs_gateway ? 1 : 0
+  name         = "gke-vcs-gateway-${var.seed}"
   address_type = "EXTERNAL"
   ip_version   = "IPV4"
-}
-
-resource "google_compute_address" "vcs-gateway-v6" {
-  count              = (var.enable_vcs_gateway && var.enabled) ? 1 : 0
-  name               = "gke-vcs-gateway-v6-${var.seed}"
-  address_type       = "EXTERNAL"
-  ip_version         = "IPV6"
-  ipv6_endpoint_type = "NETLB"
-  subnetwork         = google_compute_subnetwork.default[0].id
 }

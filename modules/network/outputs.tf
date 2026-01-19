@@ -46,22 +46,12 @@ output "mqtt_v6_name" {
   description = "Public IPv6 address for MQTT traffic."
 }
 
-output "vcs_gateway_v4_address" {
-  value       = length(google_compute_address.vcs-gateway-v4) == 1 ? google_compute_address.vcs-gateway-v4[0].address : ""
-  description = "Public IPv4 address for VCS Gateway traffic."
+output "vcs_gateway_address" {
+  value       = length(google_compute_global_address.vcs-gateway) == 1 ? google_compute_global_address.vcs-gateway[0].address : ""
+  description = "Public IPv4 address for VCS Gateway Ingress."
 }
 
-output "vcs_gateway_v4_name" {
-  value       = length(google_compute_address.vcs-gateway-v4) == 1 ? google_compute_address.vcs-gateway-v4[0].name : ""
-  description = "Name of the IPv4 address for VCS Gateway traffic."
-}
-
-output "vcs_gateway_v6_address" {
-  value       = length(google_compute_address.vcs-gateway-v6) == 1 ? google_compute_address.vcs-gateway-v6[0].address : ""
-  description = "Public IPv6 address for VCS Gateway traffic."
-}
-
-output "vcs_gateway_v6_name" {
-  value       = length(google_compute_address.vcs-gateway-v6) == 1 ? google_compute_address.vcs-gateway-v6[0].name : ""
-  description = "Name of the IPv6 address for VCS Gateway traffic."
+output "vcs_gateway_address_name" {
+  value       = length(google_compute_global_address.vcs-gateway) == 1 ? google_compute_global_address.vcs-gateway[0].name : ""
+  description = "Name of the IPv4 address for VCS Gateway Ingress."
 }

@@ -1,0 +1,15 @@
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: vcs-gateway
+  namespace: ${NAMESPACE}
+spec:
+  default:
+    config:
+      type: GRPC
+      grpcHealthCheck:
+        port: ${PORT}
+  targetRef:
+    group: "" # mandatory field, but must be empty string for 'Service' kind
+    kind: Service
+    name: ${SERVICE_NAME}

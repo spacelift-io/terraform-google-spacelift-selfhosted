@@ -157,7 +157,7 @@ module "spacelift" {
 
 ### With VCS Gateway
 
-See the [with-vcs-gateway example](./examples/with-vcs-gateway) for deploying Spacelift with VCS Gateway enabled, which allows connecting remote VCS agents to Spacelift.
+See the [with-vcs-gateway example](./examples/with-vcs-gateway) for deploying Spacelift with VCS Gateway enabled, bridging Spacelift to internally-hosted VCS systems (e.g., GitHub Enterprise, GitLab, Bitbucket Data Center).
 
 ## 🚀 Release
 

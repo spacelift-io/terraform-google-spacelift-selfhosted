@@ -34,3 +34,7 @@ module "spacelift" {
   # VCS Gateway configuration
   vcs_gateway_domain = var.vcs_gateway_domain
 }
+
+output "vcs_gateway_healthcheck_manifest" {
+  value = module.spacelift.vcs_gateway_healthcheck_manifest
+}
