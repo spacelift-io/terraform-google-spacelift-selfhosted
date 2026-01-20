@@ -62,3 +62,11 @@ resource "google_compute_address" "mqtt-v6" {
   ipv6_endpoint_type = "NETLB"
   subnetwork         = google_compute_subnetwork.default[0].id
 }
+
+# Global IPv4 address for VCS Gateway Ingress
+resource "google_compute_global_address" "vcs-gateway" {
+  count        = var.enable_vcs_gateway ? 1 : 0
+  name         = "gke-vcs-gateway-${var.seed}"
+  address_type = "EXTERNAL"
+  ip_version   = "IPV4"
+}

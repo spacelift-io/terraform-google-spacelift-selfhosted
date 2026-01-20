@@ -33,6 +33,7 @@ module "network" {
   enabled    = var.enable_network
 
   enable_external_workers         = var.enable_external_workers
+  enable_vcs_gateway              = var.vcs_gateway_domain != ""
   ip_cidr_range                   = var.ip_cidr_range
   region                          = var.region
   secondary_ip_range_for_pods     = var.secondary_ip_range_for_pods

@@ -15,6 +15,7 @@ drain:
 
 cloudSqlProxy:
   enabled: true
+  quiet: true # Change this to false to see Cloud SQL Proxy logs
   dbConnectionName: "${DATABASE_CONNECTION_NAME}"
 
 ingress:
@@ -41,4 +42,20 @@ mqttService:
   annotations:
     cloud.google.com/l4-rbs: "enabled"
     networking.gke.io/load-balancer-ip-addresses: "${MQTT_IP_NAME},${MQTT_IPV6_NAME}"
+%{ endif ~}
+
+%{ if VCS_GATEWAY_ENABLED ~}
+vcsGateway:
+  enabled: true
+  domain: "${VCS_GATEWAY_DOMAIN}"
+  ingress:
+    enabled: false
+  service:
+    appProtocol: "kubernetes.io/h2c"
+  gateway:
+    enabled: true
+    gatewayClassName: "gke-l7-global-external-managed"
+    annotations:
+      networking.gke.io/address-name: "${VCS_GATEWAY_IP_NAME}"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
 %{ endif ~}

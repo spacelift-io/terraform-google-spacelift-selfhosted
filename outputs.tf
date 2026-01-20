@@ -72,6 +72,11 @@ output "mqtt_ipv6_address" {
   description = "The IPv6 address of the MQTT service. It is empty if 'enable_external_workers' is set to false."
 }
 
+output "vcs_gateway_address" {
+  value       = module.network.vcs_gateway_address
+  description = "The IPv4 address of the VCS Gateway Ingress. Empty if VCS Gateway is disabled."
+}
+
 ### Artifact store ###
 
 output "artifact_repository_url" {
@@ -160,7 +165,7 @@ output "deliveries_bucket" {
 
 output "shell" {
   sensitive = true
-  value = templatefile("${path.module}/env.tftpl", {
+  value = templatefile("${path.module}/templates/env.tftpl", {
     env : {
       SPACELIFT_VERSION : var.spacelift_version != null ? var.spacelift_version : "",
       GCP_PROJECT : var.project,
@@ -172,6 +177,7 @@ output "shell" {
       PUBLIC_IPV6_ADDRESS : module.network.gke_public_v6_address,
       MQTT_IP_ADDRESS : module.network.mqtt_v4_address,
       MQTT_IPV6_ADDRESS : module.network.mqtt_v6_address,
+      VCS_GATEWAY_IP_ADDRESS : module.network.vcs_gateway_address,
 
       # Artifacts
       ARTIFACT_REGISTRY_DOMAIN : module.artifacts.repository_domain,
@@ -193,7 +199,7 @@ output "shell" {
 output "kubernetes_secrets" {
   sensitive   = true
   description = "Kubernetes secrets required for the Spacelift services. This output is just included as a convenience for use as part of the EKS getting started guide."
-  value = templatefile("${path.module}/kubernetes-secrets.tftpl", {
+  value = templatefile("${path.module}/templates/kubernetes-secrets.tftpl", {
     NAMESPACE                                      = var.k8s_namespace
     SERVER_DOMAIN                                  = var.website_domain
     MQTT_BROKER_DOMAIN                             = module.dns.mqtt_endpoint
@@ -218,12 +224,13 @@ output "kubernetes_secrets" {
     ADMIN_PASSWORD                                 = var.admin_password != null ? var.admin_password : ""
     LAUNCHER_IMAGE                                 = "${module.artifacts.launcher_repository_url}/spacelift-launcher"
     LAUNCHER_IMAGE_TAG                             = var.spacelift_version != null ? var.spacelift_version : ""
+    VCS_GATEWAY_ENDPOINT                           = var.vcs_gateway_domain != "" ? "${var.vcs_gateway_domain}:443" : ""
   })
 }
 
 output "helm_values" {
   description = "Generates a Helm values.yaml file that can be used when deploying Spacelift. This output is just included as a convenience for use as part of the EKS getting started guide."
-  value = templatefile("${path.module}/helm-values.tftpl", {
+  value = templatefile("${path.module}/templates/helm-values.tftpl", {
     SERVER_DOMAIN               = var.website_domain
     BACKEND_IMAGE               = "${module.artifacts.repository_url}/spacelift-backend"
     SPACELIFT_VERSION           = var.spacelift_version != null ? var.spacelift_version : ""
@@ -234,5 +241,17 @@ output "helm_values" {
     EXTERNAL_WORKERS_ENABLED    = var.enable_external_workers
     MQTT_IP_NAME                = module.network.mqtt_v4_name
     MQTT_IPV6_NAME              = module.network.mqtt_v6_name
+    VCS_GATEWAY_ENABLED         = var.vcs_gateway_domain != ""
+    VCS_GATEWAY_DOMAIN          = var.vcs_gateway_domain
+    VCS_GATEWAY_IP_NAME         = module.network.vcs_gateway_address_name
   })
+}
+
+output "vcs_gateway_healthcheck_manifest" {
+  description = "GKE HealthCheckPolicy manifest for VCS Gateway gRPC health checks. Only applicable when VCS Gateway is enabled."
+  value = var.vcs_gateway_domain != "" ? templatefile("${path.module}/templates/vcs-gateway-healthcheck.tftpl", {
+    NAMESPACE    = var.k8s_namespace
+    PORT         = 1984
+    SERVICE_NAME = "spacelift-vcs-gateway"
+  }) : ""
 }
