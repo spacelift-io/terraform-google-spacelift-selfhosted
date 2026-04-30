@@ -1,0 +1,37 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      all:
+        patterns:
+          - "*"
+
+  - package-ecosystem: terraform
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      all:
+        patterns:
+          - "*"
+
+  - package-ecosystem: terraform
+    directory: /examples/simple
+    schedule:
+      interval: weekly
+    groups:
+      all:
+        patterns:
+          - "*"
+
+  - package-ecosystem: terraform
+    directory: /examples/with-vcs-gateway
+    schedule:
+      interval: weekly
+    groups:
+      all:
+        patterns:
+          - "*"
