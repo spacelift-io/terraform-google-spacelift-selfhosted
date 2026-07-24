@@ -1,9 +1,9 @@
 output "subnetwork" {
-  value = length(google_compute_subnetwork.default) == 1 ? google_compute_subnetwork.default[0] : null
+  value = one(google_compute_subnetwork.default)
 }
 
 output "network" {
-  value = length(google_compute_network.default) == 1 ? google_compute_network.default[0] : null
+  value = one(google_compute_network.default)
 }
 
 output "gke_public_v4_address" {
