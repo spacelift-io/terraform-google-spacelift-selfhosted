@@ -8,7 +8,7 @@ This module creates a base infrastructure for a self-hosted Spacelift instance o
 > deploys the scheduler Deployment. **Requires Self-Hosted v6.4.0 or newer**, the
 > first release whose drain always runs the cron scheduler. Nothing has to be
 > configured for it - the generated `spacelift-drain` secret carries no scheduler
-> key at all. Removed variable: `drain_scheduler_enabled`.
+> key at all.
 
 > [!IMPORTANT]
 > **Breaking change in v2.0.0:** The database version is now configurable and must be explicitly defined (no longer hardcoded to `POSTGRES_14`). This enables you to upgrade to newer PostgreSQL versions. See the [Terraform resource documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance) for available versions.
