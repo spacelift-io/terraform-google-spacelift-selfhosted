@@ -10,7 +10,7 @@ resource "google_storage_bucket_iam_member" "buckets" {
     google_storage_bucket.spacelift-modules,
     google_storage_bucket.spacelift-policy-inputs,
     google_storage_bucket.spacelift-run-logs,
-    google_storage_bucket.spacelift-states,
+    google_storage_bucket.spacelift-run-observability,
     google_storage_bucket.spacelift-states,
     google_storage_bucket.spacelift-uploads,
     google_storage_bucket.spacelift-user-uploaded-workspaces,

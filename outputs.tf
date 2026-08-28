@@ -138,6 +138,11 @@ output "run_logs_bucket" {
   description = "Name of the bucket used for storing run logs"
 }
 
+output "run_observability_bucket" {
+  value       = module.storage.run_observability_bucket
+  description = "Name of the bucket used for storing run observability artifacts"
+}
+
 output "states_bucket" {
   value       = module.storage.states_bucket
   description = "Name of the bucket used for storing stack states"
@@ -209,6 +214,7 @@ output "kubernetes_secrets" {
     OBJECT_STORAGE_BUCKET_MODULES                  = module.storage.modules_bucket
     OBJECT_STORAGE_BUCKET_POLICY_INPUTS            = module.storage.policy_inputs_bucket
     OBJECT_STORAGE_BUCKET_RUN_LOGS                 = module.storage.run_logs_bucket
+    OBJECT_STORAGE_BUCKET_RUN_OBSERVABILITY        = module.storage.run_observability_bucket
     OBJECT_STORAGE_BUCKET_STATES                   = module.storage.states_bucket
     OBJECT_STORAGE_BUCKET_USER_UPLOADED_WORKSPACES = module.storage.user_uploaded_workspaces_bucket
     OBJECT_STORAGE_BUCKET_WORKSPACE                = module.storage.workspace_bucket
