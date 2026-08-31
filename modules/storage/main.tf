@@ -5,6 +5,7 @@ locals {
     "modules" : "spacelift-modules-${var.seed}",
     "policy" : "spacelift-policy-inputs-${var.seed}",
     "run-logs" : "spacelift-run-logs-${var.seed}",
+    "run-observability" : "spacelift-run-observability-${var.seed}",
     "states" : "spacelift-states-${var.seed}",
     "uploads" : "spacelift-uploads-${var.seed}",
     "user-uploads" : "spacelift-user-uploaded-workspaces-${var.seed}",
@@ -99,6 +100,45 @@ resource "google_storage_bucket" "spacelift-policy-inputs" {
 
 resource "google_storage_bucket" "spacelift-run-logs" {
   name          = local.bucket_names["run-logs"]
+  location      = var.region
+  force_destroy = true
+
+  public_access_prevention = "enforced"
+
+  versioning {
+    enabled = true
+  }
+
+  lifecycle_rule {
+    action {
+      type = "Delete"
+    }
+
+    condition {
+      days_since_noncurrent_time = 1
+    }
+  }
+
+  lifecycle_rule {
+    condition {
+      age = 60
+    }
+    action {
+      type = "Delete"
+    }
+  }
+  lifecycle_rule {
+    condition {
+      age = 1
+    }
+    action {
+      type = "AbortIncompleteMultipartUpload"
+    }
+  }
+}
+
+resource "google_storage_bucket" "spacelift-run-observability" {
+  name          = local.bucket_names["run-observability"]
   location      = var.region
   force_destroy = true
 

@@ -23,6 +23,11 @@ output "run_logs_bucket" {
   description = "Name of the bucket used for storing run logs"
 }
 
+output "run_observability_bucket" {
+  value       = google_storage_bucket.spacelift-run-observability.name
+  description = "Name of the bucket used for storing run observability artifacts"
+}
+
 output "states_bucket" {
   value       = google_storage_bucket.spacelift-states.name
   description = "Name of the bucket used for storing stack states"
