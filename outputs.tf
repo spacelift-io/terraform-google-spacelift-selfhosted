@@ -220,8 +220,8 @@ output "kubernetes_secrets" {
     OBJECT_STORAGE_BUCKET_WORKSPACE                = module.storage.workspace_bucket
     OBJECT_STORAGE_BUCKET_METADATA                 = module.storage.metadata_bucket
     OBJECT_STORAGE_BUCKET_UPLOADS                  = module.storage.uploads_bucket
-    DATABASE_URL                                   = var.enable_database ? "postgres://${module.db[0].database_iam_user}@127.0.0.1/${module.db[0].database_name}" : ""
-    DATABASE_READ_ONLY_URL                         = var.enable_database ? "postgres://${module.db[0].database_iam_user}@127.0.0.1/${module.db[0].database_name}" : ""
+    DATABASE_URL                                   = var.enable_database ? "postgres://${urlencode(module.db[0].database_iam_user)}@127.0.0.1/${module.db[0].database_name}" : ""
+    DATABASE_READ_ONLY_URL                         = var.enable_database ? "postgres://${urlencode(module.db[0].database_iam_user)}@127.0.0.1/${module.db[0].database_name}" : ""
     LICENSE_TOKEN                                  = var.license_token != null ? var.license_token : ""
     ENCRYPTION_RSA_PRIVATE_KEY                     = var.encryption_rsa_private_key
     SPACELIFT_PUBLIC_API                           = var.spacelift_public_api != null ? var.spacelift_public_api : ""
