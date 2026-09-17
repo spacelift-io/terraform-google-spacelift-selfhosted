@@ -2,7 +2,7 @@
 # Only SNAT is allowed here, this should not be used for routing incoming traffic to pods.
 module "gke-router" {
   source     = "terraform-google-modules/cloud-router/google"
-  version    = "~> 8.0"
+  version    = ">= 8.0, < 10.0"
   project_id = var.project
   region     = var.region
   name       = "gke-router-${var.seed}"
