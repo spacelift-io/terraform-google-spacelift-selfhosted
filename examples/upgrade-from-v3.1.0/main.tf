@@ -1,6 +1,7 @@
 # Temporary test case for ER-10, dropped before the PR is ready.
-# Applies the released v3.1.0 with external workers on, then the after_apply hook
-# switches the source to this branch and checks that the plan has no changes.
+# Applies the released v3.1.0, then the after_apply hook switches the source to
+# this branch and checks that the plan has no changes. External workers stay off:
+# the CI identity cannot create the Cloud DNS zone they need (403).
 
 terraform {
   required_providers {
@@ -42,5 +43,4 @@ module "spacelift" {
   database_tier                = "db-f1-micro"
   database_deletion_protection = false
   database_version             = "POSTGRES_17"
-  enable_external_workers      = true
 }

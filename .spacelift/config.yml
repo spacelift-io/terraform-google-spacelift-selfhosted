@@ -3,14 +3,18 @@ module_version: "3.2.0"
 
 tests:
   - name: Test infrastructure creation
+    id: fresh-install
     runner_image: public.ecr.aws/spacelift/runner-terraform:gcp-latest
     project_root: "examples/simple"
     environment:
       TF_VAR_region: europe-west3
       TF_VAR_project: self-hosted-v3-testing
 
-  # Temporary ER-10 test cases, dropped before the PR is ready.
-  - name: Upgrade from v3.1.0 with external workers
+  # Temporary ER-10 test cases, dropped before the PR is ready. The cases run one
+  # after another: the subnetwork name is fixed, so two installs in one project collide.
+  - name: Upgrade from v3.1.0
+    id: upgrade
+    depends_on: ["fresh-install"]
     runner_image: public.ecr.aws/spacelift/runner-terraform:gcp-latest
     project_root: "examples/upgrade-from-v3.1.0"
     environment:
@@ -20,7 +24,11 @@ tests:
       # Switch the module source from v3.1.0 to this branch and check that the
       # plan only moves resources: no adds, changes or destroys.
       - |
-        TF_BIN=$(command -v tofu || command -v terraform)
+        TF_BIN=$(command -v tofu || command -v terraform || true)
+        if [ -z "$TF_BIN" ]; then for c in /bin/terraform /bin/tofu /usr/local/bin/terraform /usr/local/bin/tofu; do if [ -x "$c" ]; then TF_BIN=$c; break; fi; done; fi
+        if [ -z "$TF_BIN" ]; then TF_BIN=$(find / -maxdepth 4 -path /proc -prune -o \( -name terraform -o -name tofu \) -type f -print 2>/dev/null | head -1); fi
+        echo "PATH=$PATH TF_BIN=$TF_BIN"; ls -la /bin/terraform /bin/tofu 2>&1 || true
+        [ -n "$TF_BIN" ] || { echo "FAIL: no terraform or tofu binary found"; exit 1; }
         OLD_SOURCE='source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v3.1.0"'
         NEW_SOURCE='source = "../.."'
         restore() { sed -i "s|$NEW_SOURCE|$OLD_SOURCE|" main.tf; $TF_BIN init -input=false -no-color > /dev/null; }
@@ -38,10 +46,12 @@ tests:
           if grep -q "Changes to Outputs" upgrade-plan.txt; then echo "FAIL: the upgrade plan has output changes"; exit 1; fi
         fi
         MOVES=$(grep -c "has moved to" upgrade-plan.txt || true)
-        if [ "$MOVES" != "4" ]; then echo "FAIL: expected 4 moves (artifacts repo, public repo, public binding, node reader role), got $MOVES"; exit 1; fi
-        echo "OK: upgrade from v3.1.0 plans no changes, only the 4 expected moves"
+        if [ "$MOVES" != "2" ]; then echo "FAIL: expected 2 moves (artifacts repo, node reader role), got $MOVES"; exit 1; fi
+        echo "OK: upgrade from v3.1.0 plans no changes, only the 2 expected moves"
 
   - name: Without container registry
+    id: without-registry
+    depends_on: ["upgrade"]
     runner_image: public.ecr.aws/spacelift/runner-terraform:gcp-latest
     project_root: "examples/without-container-registry"
     environment:
@@ -51,7 +61,11 @@ tests:
       # With create_container_registry = false the outputs have no image settings.
       # Only helm_values is printed: shell and kubernetes_secrets hold secrets.
       - |
-        TF_BIN=$(command -v tofu || command -v terraform)
+        TF_BIN=$(command -v tofu || command -v terraform || true)
+        if [ -z "$TF_BIN" ]; then for c in /bin/terraform /bin/tofu /usr/local/bin/terraform /usr/local/bin/tofu; do if [ -x "$c" ]; then TF_BIN=$c; break; fi; done; fi
+        if [ -z "$TF_BIN" ]; then TF_BIN=$(find / -maxdepth 4 -path /proc -prune -o \( -name terraform -o -name tofu \) -type f -print 2>/dev/null | head -1); fi
+        echo "PATH=$PATH TF_BIN=$TF_BIN"; ls -la /bin/terraform /bin/tofu 2>&1 || true
+        [ -n "$TF_BIN" ] || { echo "FAIL: no terraform or tofu binary found"; exit 1; }
         FAIL=0
         HELM_OUT=$($TF_BIN output -raw helm_values)
         SHELL_OUT=$($TF_BIN output -raw shell)

@@ -42,7 +42,6 @@ module "spacelift" {
   database_tier                = "db-f1-micro"
   database_deletion_protection = false
   database_version             = "POSTGRES_17"
-  enable_external_workers      = true
   spacelift_version            = "v0.0.0-test"
 
   create_container_registry = false
