@@ -8,3 +8,65 @@ tests:
     environment:
       TF_VAR_region: europe-west3
       TF_VAR_project: self-hosted-v3-testing
+
+  # Temporary ER-10 test cases, dropped before the PR is ready.
+  - name: Upgrade from v3.1.0 with external workers
+    runner_image: public.ecr.aws/spacelift/runner-terraform:gcp-latest
+    project_root: "examples/upgrade-from-v3.1.0"
+    environment:
+      TF_VAR_region: europe-west3
+      TF_VAR_project: self-hosted-v3-testing
+    after_apply:
+      # Switch the module source from v3.1.0 to this branch and check that the
+      # plan only moves resources: no adds, changes or destroys.
+      - |
+        TF_BIN=$(command -v tofu || command -v terraform)
+        OLD_SOURCE='source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v3.1.0"'
+        NEW_SOURCE='source = "../.."'
+        restore() { sed -i "s|$NEW_SOURCE|$OLD_SOURCE|" main.tf; $TF_BIN init -input=false -no-color > /dev/null; }
+        trap restore EXIT
+        sed -i "s|$OLD_SOURCE|$NEW_SOURCE|" main.tf
+        grep -qF "$NEW_SOURCE" main.tf || { echo "FAIL: could not switch the module source"; exit 1; }
+        $TF_BIN init -input=false -no-color > /dev/null || { echo "FAIL: init on the branch"; exit 1; }
+        CODE=0
+        $TF_BIN plan -input=false -lock=false -no-color -detailed-exitcode > upgrade-plan.txt 2>&1 || CODE=$?
+        grep -E "has moved to|Plan:|No changes|Error|will be|must be replaced|Changes to Outputs" upgrade-plan.txt || true
+        echo "plan exit code: $CODE"
+        if [ "$CODE" = "1" ]; then echo "FAIL: plan errored"; tail -50 upgrade-plan.txt; exit 1; fi
+        if [ "$CODE" = "2" ]; then
+          grep -q "Plan: 0 to add, 0 to change, 0 to destroy." upgrade-plan.txt || { echo "FAIL: the upgrade plan has resource changes"; exit 1; }
+          if grep -q "Changes to Outputs" upgrade-plan.txt; then echo "FAIL: the upgrade plan has output changes"; exit 1; fi
+        fi
+        MOVES=$(grep -c "has moved to" upgrade-plan.txt || true)
+        if [ "$MOVES" != "4" ]; then echo "FAIL: expected 4 moves (artifacts repo, public repo, public binding, node reader role), got $MOVES"; exit 1; fi
+        echo "OK: upgrade from v3.1.0 plans no changes, only the 4 expected moves"
+
+  - name: Without container registry
+    runner_image: public.ecr.aws/spacelift/runner-terraform:gcp-latest
+    project_root: "examples/without-container-registry"
+    environment:
+      TF_VAR_region: europe-west3
+      TF_VAR_project: self-hosted-v3-testing
+    after_apply:
+      # With create_container_registry = false the outputs have no image settings.
+      # Only helm_values is printed: shell and kubernetes_secrets hold secrets.
+      - |
+        TF_BIN=$(command -v tofu || command -v terraform)
+        FAIL=0
+        HELM_OUT=$($TF_BIN output -raw helm_values)
+        SHELL_OUT=$($TF_BIN output -raw shell)
+        K8S_OUT=$($TF_BIN output -raw kubernetes_secrets)
+        echo "----- helm_values -----"; echo "$HELM_OUT"; echo "-----------------------"
+        [ "$($TF_BIN output -json artifact_repository_url)" = "null" ] || { echo "FAIL: artifact_repository_url is not null"; FAIL=1; }
+        if echo "$SHELL_OUT" | grep -qE "ARTIFACT_REGISTRY_DOMAIN|BACKEND_IMAGE|LAUNCHER_IMAGE"; then echo "FAIL: shell has image lines"; FAIL=1; fi
+        if echo "$K8S_OUT" | grep -qE "LAUNCHER_IMAGE|ARTIFACT_REGISTRY_DOMAIN|BACKEND_IMAGE"; then echo "FAIL: kubernetes_secrets has image lines"; FAIL=1; fi
+        if echo "$HELM_OUT" | grep -qE "^ *image:|LAUNCHER_IMAGE|BACKEND_IMAGE|ARTIFACT_REGISTRY_DOMAIN"; then echo "FAIL: helm_values has an image"; FAIL=1; fi
+        for name in SHELL_OUT K8S_OUT HELM_OUT; do
+          eval "VALUE=\$$name"
+          if echo "$VALUE" | grep -qwE "null"; then echo "FAIL: $name has a null value"; FAIL=1; fi
+        done
+        echo "$SHELL_OUT" | grep -q "^export GKE_CLUSTER_NAME=." || { echo "FAIL: shell misses GKE_CLUSTER_NAME"; FAIL=1; }
+        echo "$K8S_OUT" | grep -q "VCS_GATEWAY_ENDPOINT" || { echo "FAIL: kubernetes_secrets misses VCS_GATEWAY_ENDPOINT"; FAIL=1; }
+        echo "$HELM_OUT" | grep -q 'secretRef: "spacelift-shared"' || { echo "FAIL: helm_values misses shared.secretRef"; FAIL=1; }
+        [ "$FAIL" = "0" ] || exit 1
+        echo "OK: no registry, no image lines in shell, kubernetes_secrets and helm_values"
