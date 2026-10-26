@@ -72,6 +72,12 @@ variable "enable_external_workers" {
   default     = false
 }
 
+variable "create_container_registry" {
+  type        = bool
+  description = "Switch this to false to skip the Artifact Registry repositories for the Spacelift images, for example when you pull the images from registry.spacelift.io instead. It also skips the public launcher repository created for 'enable_external_workers', so external workers then pull the launcher image from registry.spacelift.io with credentials. It also skips the project-wide 'roles/artifactregistry.reader' grant for the GKE node service account: if you bring your own cluster ('enable_gke = false') and its nodes relied on that grant to read Artifact Registry, grant it yourself. With false, the image settings are left out of the outputs ('artifact_repository_url' is null; no ARTIFACT_REGISTRY_DOMAIN, BACKEND_IMAGE or LAUNCHER_IMAGE in 'shell', no image in 'helm_values', no LAUNCHER_IMAGE in 'kubernetes_secrets'), so set the images and the image pull secret in your Helm values."
+  default     = true
+}
+
 variable "ip_cidr_range" {
   type        = string
   description = "The IP CIDR range for the subnetwork used by the GKE cluster"
@@ -95,7 +101,7 @@ variable "node_service_account" {
     email : string,
   })
   default     = null
-  description = "If GKE is disabled, provide your existing cluster default node service account here. This is used to grant privileges of your cluster to pull docker images."
+  description = "If GKE is disabled, provide your existing cluster default node service account here. This is used to grant privileges of your cluster to pull docker images. Not needed if 'create_container_registry' is set to false."
 }
 
 variable "network" {

@@ -40,7 +40,7 @@ The module creates:
 - Network resources
   - a compute network for the infrastructure
   - a compute subnetwork for the GKE cluster
-- Artifact repository
+- Artifact repository (unless `create_container_registry` is set to `false`)
   - a Google Artifact Registry repository for storing Docker images
   - a PUBLIC Google Artifact Registry repository for storing Docker images for workers (if external workers are enabled)
 - Database resources
@@ -162,6 +162,31 @@ module "spacelift" {
   node_service_account = google_service_account.gke-node-service-account
 }
 ```
+
+### Do not create a container registry
+
+Set `create_container_registry` to `false` if you don't want the module to create the Artifact Registry repositories, for example because you pull the Spacelift images from `registry.spacelift.io`. The default is `true`, so existing installations don't change.
+
+```hcl
+module "spacelift" {
+  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted"
+
+  region           = var.region
+  project          = var.project
+  website_domain   = var.app_domain
+  database_version = "POSTGRES_17"
+
+  create_container_registry = false
+}
+```
+
+With the flag set to `false`:
+
+- the module creates neither the private repository nor the public launcher repository, even if `enable_external_workers` is `true`. External workers then pull the launcher image from `registry.spacelift.io` with credentials.
+- the GKE node service account doesn't get the project-wide `roles/artifactregistry.reader` role. If you bring your own cluster (`enable_gke = false`) and its nodes relied on this grant to read Artifact Registry, grant the role yourself. `node_service_account` is not needed in this case.
+- the outputs don't contain any image settings: `artifact_repository_url` is `null`, `shell` has no `ARTIFACT_REGISTRY_DOMAIN`, `BACKEND_IMAGE` or `LAUNCHER_IMAGE`, `helm_values` has no `shared.image` and `kubernetes_secrets` has no `LAUNCHER_IMAGE` or `LAUNCHER_IMAGE_TAG`. Set the images and the image pull secret in your Helm values instead.
+
+The module needs Terraform 1.1 or newer (or OpenTofu 1.6 or newer), because it uses `moved` blocks to keep existing installations unchanged.
 
 ### With VCS Gateway
 

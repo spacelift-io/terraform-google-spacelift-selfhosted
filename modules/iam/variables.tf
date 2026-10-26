@@ -21,3 +21,8 @@ variable "app_service_account_name" {
   type        = string
   description = "The name of the service account used by the Spacelift app in the GKE cluster"
 }
+
+variable "create_container_registry" {
+  type        = bool
+  description = "Whether the Spacelift container registry is created. If false, the GKE node service account doesn't get the Artifact Registry reader role."
+}
