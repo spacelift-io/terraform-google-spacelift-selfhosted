@@ -4,6 +4,7 @@ module_version: "3.2.0"
 tests:
   - name: Test infrastructure creation
     id: fresh-install
+    depends_on: ["without-registry"]
     runner_image: public.ecr.aws/spacelift/runner-terraform:gcp-latest
     project_root: "examples/simple"
     environment:
@@ -51,7 +52,6 @@ tests:
 
   - name: Without container registry
     id: without-registry
-    depends_on: ["upgrade"]
     runner_image: public.ecr.aws/spacelift/runner-terraform:gcp-latest
     project_root: "examples/without-container-registry"
     environment:
@@ -71,7 +71,9 @@ tests:
         SHELL_OUT=$($TF_BIN output -raw shell)
         K8S_OUT=$($TF_BIN output -raw kubernetes_secrets)
         echo "----- helm_values -----"; echo "$HELM_OUT"; echo "-----------------------"
-        [ "$($TF_BIN output -json artifact_repository_url)" = "null" ] || { echo "FAIL: artifact_repository_url is not null"; FAIL=1; }
+        # A null root output is not stored in the state, so "not found" also means null.
+        URL_OUT=$($TF_BIN output -json artifact_repository_url 2>/dev/null || echo null)
+        [ "$URL_OUT" = "null" ] || { echo "FAIL: artifact_repository_url is not null"; FAIL=1; }
         if echo "$SHELL_OUT" | grep -qE "ARTIFACT_REGISTRY_DOMAIN|BACKEND_IMAGE|LAUNCHER_IMAGE"; then echo "FAIL: shell has image lines"; FAIL=1; fi
         if echo "$K8S_OUT" | grep -qE "LAUNCHER_IMAGE|ARTIFACT_REGISTRY_DOMAIN|BACKEND_IMAGE"; then echo "FAIL: kubernetes_secrets has image lines"; FAIL=1; fi
         if echo "$HELM_OUT" | grep -qE "^ *image:|LAUNCHER_IMAGE|BACKEND_IMAGE|ARTIFACT_REGISTRY_DOMAIN"; then echo "FAIL: helm_values has an image"; FAIL=1; fi
