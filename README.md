@@ -23,7 +23,8 @@ Check out the [Terraform](https://developer.hashicorp.com/terraform/language/bac
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v2.0.0"
+  source  = "spacelift-io/spacelift-selfhosted/google"
+  version = "~> 3.1"
 
   region           = "europe-west1"
   project          = "spacelift-production"
@@ -52,7 +53,7 @@ The module creates:
 
 ## Module registries
 
-The module is also available [on the OpenTofu registry](https://search.opentofu.org/module/spacelift-io/spacelift-selfhosted/google/latest) where you can browse the input and output variables.
+The module is published as `spacelift-io/spacelift-selfhosted/google` on both the [Terraform registry](https://registry.terraform.io/modules/spacelift-io/spacelift-selfhosted/google/latest) and the [OpenTofu registry](https://search.opentofu.org/module/spacelift-io/spacelift-selfhosted/google/latest), so the snippets here work with either tool. Both registries list the module's inputs and outputs.
 
 ## Examples
 
@@ -62,7 +63,8 @@ This deploys a new VPC, a new Cloud SQL instance and a GKE cluster
 
 ```hcl
 module "spacelift" {
-  source  = "github.com/spacelift-io/terraform-google-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/google"
+  version = "~> 3.1"
 
   region           = var.region
   project          = var.project
@@ -99,7 +101,8 @@ resource "google_compute_subnetwork" "default" {
 }
 
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/google"
+  version = "~> 3.1"
 
   region           = var.region
   project          = var.project
@@ -108,8 +111,8 @@ module "spacelift" {
   database_version = "POSTGRES_17"
 
   enable_network = false
-  network = google_compute_network.default
-  subnetwork = google_compute_subnetwork.default
+  network        = google_compute_network.default
+  subnetwork     = google_compute_subnetwork.default
 }
 ```
 
@@ -127,7 +130,8 @@ resource "google_service_account" "gke-node-service-account" {
 }
 
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/google"
+  version = "~> 3.1"
 
   region           = var.region
   project          = var.project
@@ -135,10 +139,10 @@ module "spacelift" {
   database_tier    = "db-f1-micro"
   database_version = "POSTGRES_17"
 
-  enable_gke = false
-  enable_network = false
+  enable_gke           = false
+  enable_network       = false
   node_service_account = google_service_account.gke-node-service-account
-  network = google_compute_network.default
+  network              = google_compute_network.default
 }
 ```
 
@@ -150,7 +154,8 @@ resource "google_service_account" "gke-node-service-account" {
 }
 
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/google"
+  version = "~> 3.1"
 
   region         = var.region
   project        = var.project
