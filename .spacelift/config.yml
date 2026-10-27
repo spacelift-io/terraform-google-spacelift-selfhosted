@@ -49,6 +49,37 @@ tests:
         MOVES=$(grep -c "has moved to" upgrade-plan.txt || true)
         if [ "$MOVES" != "2" ]; then echo "FAIL: expected 2 moves (artifacts repo, node reader role), got $MOVES"; exit 1; fi
         echo "OK: upgrade from v3.1.0 plans no changes, only the 2 expected moves"
+      # Keep path from the README: on a copy of the state, with a local backend,
+      # remove the repositories from the state, turn the flag off and plan. Only the
+      # node reader role may be destroyed, nothing in Artifact Registry. The state
+      # copy is from v3.1.0, so the address has no [0] yet.
+      - |
+        (
+        TF_BIN=$(command -v tofu || command -v terraform || true)
+        if [ -z "$TF_BIN" ]; then for c in /bin/terraform /bin/tofu /usr/local/bin/terraform /usr/local/bin/tofu; do if [ -x "$c" ]; then TF_BIN=$c; break; fi; done; fi
+        [ -n "$TF_BIN" ] || { echo "FAIL: no terraform or tofu binary found"; exit 1; }
+        REPO_ROOT=$(cd ../.. && pwd)
+        KEEP=$(mktemp -d)
+        cp main.tf "$KEEP/"
+        $TF_BIN state pull > "$KEEP/terraform.tfstate"
+        grep -q '"resources"' "$KEEP/terraform.tfstate" || { echo "FAIL: could not pull the state"; exit 1; }
+        cd "$KEEP"
+        sed -i "s|github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v3.1.0|$REPO_ROOT|" main.tf
+        grep -qF "source = \"$REPO_ROOT\"" main.tf || { echo "FAIL: could not switch the module source"; exit 1; }
+        awk '{ print } /^module "spacelift" \{/ { print "  create_container_registry = false" }' main.tf > main.tf.new && mv main.tf.new main.tf
+        grep -q 'create_container_registry = false' main.tf || { echo "FAIL: could not set the flag"; exit 1; }
+        $TF_BIN init -input=false -no-color > /dev/null || { echo "FAIL: init in the keep dir"; exit 1; }
+        $TF_BIN state rm 'module.spacelift.module.artifacts' || { echo "FAIL: state rm"; exit 1; }
+        CODE=0
+        $TF_BIN plan -input=false -lock=false -no-color -detailed-exitcode > keep-plan.txt 2>&1 || CODE=$?
+        grep -E "^  # |Plan:|No changes|Error" keep-plan.txt || true
+        echo "keep plan exit code: $CODE"
+        if [ "$CODE" = "1" ]; then echo "FAIL: keep plan errored"; tail -50 keep-plan.txt; exit 1; fi
+        grep -q "Plan: 0 to add, 0 to change, 1 to destroy." keep-plan.txt || { echo "FAIL: expected only 1 destroy"; exit 1; }
+        if grep -E "^  # " keep-plan.txt | grep -q "google_artifact_registry"; then echo "FAIL: the keep plan touches Artifact Registry"; exit 1; fi
+        grep -E "^  # .* will be destroyed" keep-plan.txt | grep -q "gke-nodes_artifactregistry-reader" || { echo "FAIL: the destroy is not the node reader role"; exit 1; }
+        echo "OK: keep path, the repositories stay, only the node reader role is destroyed"
+        ) || exit 1
 
   - name: Without container registry
     id: without-registry
