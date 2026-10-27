@@ -188,6 +188,27 @@ With the flag set to `false`:
 
 The module needs Terraform 1.1 or newer (or OpenTofu 1.6 or newer), because it uses `moved` blocks to keep existing installations unchanged.
 
+#### Switch an existing installation to another registry
+
+On an existing installation, turning the flag off removes the Artifact Registry repositories from the module. Do it in this order:
+
+1. Upgrade the module, leave the flag unset and apply. The plan only moves the resources to new addresses (for example `module.artifacts` to `module.artifacts[0]`), nothing is created or destroyed.
+2. Point your services at the images in the new registry in your Helm values. Until then, the services keep pulling from Artifact Registry.
+3. Decide what happens to the repositories:
+   - **Keep them** (recommended). Remove them from the state, then set `create_container_registry = false` and apply. The repositories and their images stay in your project, the module just stops managing them. With external workers this also keeps the public launcher repository and its public read access, remove them yourself once you don't need them:
+
+     ```shell
+     tofu state rm 'module.spacelift.module.artifacts[0]'
+     ```
+
+     Replace `spacelift` with the name of your module block, and `tofu` with `terraform` if you use Terraform. Set the flag to `false` before the next apply, otherwise the module creates the repositories again.
+   - **Delete them with the images**. Set `create_container_registry = false` and apply.
+
+In both cases the apply removes the project-wide `roles/artifactregistry.reader` grant of the GKE node service account. The new registry doesn't need it, but if your nodes pull other images from Artifact Registry in this project, grant the role yourself before the apply.
+
+> [!WARNING]
+> If you set the flag to `false` without keeping the repositories first, the apply deletes them and all the images in them. It doesn't fail, so check the plan before you apply.
+
 ### With VCS Gateway
 
 See the [with-vcs-gateway example](./examples/with-vcs-gateway) for deploying Spacelift with VCS Gateway enabled, bridging Spacelift to internally-hosted VCS systems (e.g., GitHub Enterprise, GitLab, Bitbucket Data Center).
