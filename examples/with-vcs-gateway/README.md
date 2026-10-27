@@ -43,11 +43,13 @@ architecture-beta
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-google-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/google"
+  version = "~> 3.1"
 
-  region         = "us-central1"
-  project        = "my-gcp-project"
-  website_domain = "spacelift.example.com"
+  region           = "us-central1"
+  project          = "my-gcp-project"
+  website_domain   = "spacelift.example.com"
+  database_version = "POSTGRES_17"
 
   # VCS Gateway configuration
   vcs_gateway_domain = "vcs-gateway.example.com"
@@ -64,7 +66,8 @@ output "vcs_gateway_healthcheck_manifest" {
 | ------------------ | ------------------------------------------------ | ------ | -------- |
 | region             | GCP region to deploy resources                   | string | yes      |
 | project            | GCP project to deploy resources                  | string | yes      |
-| server_domain      | The domain that Spacelift is being hosted on     | string | yes      |
+| website_domain     | The domain that Spacelift is being hosted on     | string | yes      |
+| database_version   | Cloud SQL database version, e.g. `POSTGRES_17`   | string | yes      |
 | vcs_gateway_domain | The domain for the VCS Gateway external endpoint | string | yes      |
 
 ## Outputs
