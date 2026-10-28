@@ -74,7 +74,7 @@ variable "enable_external_workers" {
 
 variable "create_container_registry" {
   type        = bool
-  description = "Switch this to false to skip the Artifact Registry repositories for the Spacelift images, for example when you pull the images from oci.spacelift.io instead. It also skips the public launcher repository created for 'enable_external_workers', so external workers then pull the launcher image from oci.spacelift.io with credentials. It also skips the project-wide 'roles/artifactregistry.reader' grant for the GKE node service account: if you bring your own cluster ('enable_gke = false') and its nodes relied on that grant to read Artifact Registry, grant it yourself. With false, the image settings are left out of the outputs ('artifact_repository_url' is null; no ARTIFACT_REGISTRY_DOMAIN, BACKEND_IMAGE or LAUNCHER_IMAGE in 'shell', no image in 'helm_values', no LAUNCHER_IMAGE in 'kubernetes_secrets'), so set the images and the image pull secret in your Helm values. On an existing installation, setting it to false deletes the repositories with their images, see the README for how to keep them instead."
+  description = "Whether to create the Artifact Registry repositories for the backend and launcher images, including the public launcher repository for external workers. Set it to false if you pull the images from another registry, such as oci.spacelift.io. The artifact_repository_url output is then null, and the shell, helm_values and kubernetes_secrets outputs have no image settings. On an existing installation, setting it to false deletes the repositories with their images, see the README for how to keep them instead."
   default     = true
 }
 
