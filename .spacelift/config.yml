@@ -49,11 +49,11 @@ tests:
         MOVES=$(grep -c "has moved to" upgrade-plan.txt || true)
         if [ "$MOVES" != "2" ]; then echo "FAIL: expected 2 moves (artifacts repo, node reader role), got $MOVES"; exit 1; fi
         echo "OK: upgrade from v3.1.0 plans no changes, only the 2 expected moves"
-      # Keep path from the README: on a copy of the state, with a local backend,
-      # remove the repositories from the state, turn the flag off and plan. Only the
-      # node reader role may be destroyed, nothing in Artifact Registry. The state
-      # copy is from v3.1.0, so the address has no [0] yet.
-      - |
+        # Keep path from the README: on a copy of the state, with a local backend,
+        # remove the repositories from the state, turn the flag off and plan. Only the
+        # node reader role may be destroyed, nothing in Artifact Registry. The state
+        # copy is from v3.1.0, so the address has no [0] yet. It is in the same hook
+        # because Spacelift joins the hooks with "&&", which breaks multi-line hooks.
         (
         TF_BIN=$(command -v tofu || command -v terraform || true)
         if [ -z "$TF_BIN" ]; then for c in /bin/terraform /bin/tofu /usr/local/bin/terraform /usr/local/bin/tofu; do if [ -x "$c" ]; then TF_BIN=$c; break; fi; done; fi
@@ -64,8 +64,8 @@ tests:
         $TF_BIN state pull > "$KEEP/terraform.tfstate"
         grep -q '"resources"' "$KEEP/terraform.tfstate" || { echo "FAIL: could not pull the state"; exit 1; }
         cd "$KEEP"
-        # The hooks share one shell and the restore trap of the hook above fires only
-        # at the end, so main.tf may still point at ../.. here: replace any source.
+        # The restore trap fires only at the end, so main.tf still points at ../..
+        # here: replace any source.
         sed -i "s|^  source *= .*|  source = \"$REPO_ROOT\"|" main.tf
         grep -qF "source = \"$REPO_ROOT\"" main.tf || { echo "FAIL: could not switch the module source"; exit 1; }
         awk '{ print } /^module "spacelift" \{/ { print "  create_container_registry = false" }' main.tf > main.tf.new && mv main.tf.new main.tf
