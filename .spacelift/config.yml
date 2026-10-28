@@ -64,7 +64,9 @@ tests:
         $TF_BIN state pull > "$KEEP/terraform.tfstate"
         grep -q '"resources"' "$KEEP/terraform.tfstate" || { echo "FAIL: could not pull the state"; exit 1; }
         cd "$KEEP"
-        sed -i "s|github.com/spacelift-io/terraform-google-spacelift-selfhosted?ref=v3.1.0|$REPO_ROOT|" main.tf
+        # The hooks share one shell and the restore trap of the hook above fires only
+        # at the end, so main.tf may still point at ../.. here: replace any source.
+        sed -i "s|^  source *= .*|  source = \"$REPO_ROOT\"|" main.tf
         grep -qF "source = \"$REPO_ROOT\"" main.tf || { echo "FAIL: could not switch the module source"; exit 1; }
         awk '{ print } /^module "spacelift" \{/ { print "  create_container_registry = false" }' main.tf > main.tf.new && mv main.tf.new main.tf
         grep -q 'create_container_registry = false' main.tf || { echo "FAIL: could not set the flag"; exit 1; }
