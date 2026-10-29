@@ -165,6 +165,9 @@ module "spacelift" {
 
 ### Do not create a container registry
 
+> [!NOTE]
+> We recommend pulling the images from `oci.spacelift.io`. Starting with Self-Hosted v8.0.0, releases no longer include the image archives, so the images are only available from `oci.spacelift.io`. To keep them in your own registry, mirror them from there.
+
 Set `create_container_registry` to `false` if you don't want the module to create the Artifact Registry repositories, for example because you pull the Spacelift images from `oci.spacelift.io`. The default is `true`, so existing installations don't change.
 
 ```hcl
