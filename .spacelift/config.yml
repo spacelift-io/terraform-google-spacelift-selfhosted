@@ -5,8 +5,16 @@ tests:
   - name: Test infrastructure creation
     runner_image: public.ecr.aws/spacelift/runner-terraform:gcp-latest
     project_root: "examples/simple"
-    before_init:
-      - sh ../../.spacelift/grant-servicenetworking-agent.sh
     environment:
       TF_VAR_region: europe-west3
       TF_VAR_project: self-hosted-v3-testing
+    before_destroy:
+      # Every test install shares this project-wide grant. Destroying it breaks the
+      # destroy of any test running at the same time, so leave it in the project.
+      - |
+        addr='module.spacelift.module.db[0].google_project_iam_member.servicenetworking_role'
+        if terraform state list | grep -qxF "$addr"; then
+          terraform state rm "$addr"
+        else
+          echo "WARNING: $addr is not in the state. If it was renamed, update this hook, or overlapping tests will leak again."
+        fi
