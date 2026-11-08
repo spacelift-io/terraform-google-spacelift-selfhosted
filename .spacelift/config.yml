@@ -8,3 +8,7 @@ tests:
     environment:
       TF_VAR_region: europe-west3
       TF_VAR_project: self-hosted-v3-testing
+    before_destroy:
+      # Every test install shares this project-wide grant. Destroying it breaks the
+      # destroy of any test running at the same time, so leave it in the project.
+      - tofu state rm 'module.spacelift.module.db[0].google_project_iam_member.servicenetworking_role'
