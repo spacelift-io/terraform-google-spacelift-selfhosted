@@ -1,5 +1,5 @@
 locals {
-  node_service_account_email = var.enable_gke ? google_service_account.gke-nodes[0].email : var.node_service_account.email
+  node_service_account_email = var.enable_gke ? google_service_account.gke-nodes[0].email : try(var.node_service_account.email, null)
 }
 
 resource "google_service_account" "gke-nodes" {
@@ -16,9 +16,15 @@ resource "google_project_iam_member" "gke-nodes_container-defaultNodeServiceAcco
 }
 
 resource "google_project_iam_member" "gke-nodes_artifactregistry-reader" {
+  count   = var.create_container_registry ? 1 : 0
   role    = "roles/artifactregistry.reader"
   project = var.project
   member  = "serviceAccount:${local.node_service_account_email}"
+}
+
+moved {
+  from = google_project_iam_member.gke-nodes_artifactregistry-reader
+  to   = google_project_iam_member.gke-nodes_artifactregistry-reader[0]
 }
 
 resource "google_service_account" "spacelift-backend" {

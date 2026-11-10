@@ -41,7 +41,7 @@ The module creates:
 - Network resources
   - a compute network for the infrastructure
   - a compute subnetwork for the GKE cluster
-- Artifact repository
+- Artifact repository (unless `create_container_registry` is set to `false`)
   - a Google Artifact Registry repository for storing Docker images
   - a PUBLIC Google Artifact Registry repository for storing Docker images for workers (if external workers are enabled)
 - Database resources
@@ -167,6 +167,56 @@ module "spacelift" {
   node_service_account = google_service_account.gke-node-service-account
 }
 ```
+
+### Do not create a container registry
+
+> [!NOTE]
+> We recommend pulling the images from `oci.spacelift.io`. Starting with Self-Hosted v8.0.0, releases no longer include the image archives, so the images are only available from `oci.spacelift.io`. To keep them in your own registry, mirror them from there.
+
+Set `create_container_registry` to `false` if you don't want the module to create the Artifact Registry repositories, for example because you pull the Spacelift images from `oci.spacelift.io`. The default is `true`, so existing installations don't change.
+
+```hcl
+module "spacelift" {
+  source  = "spacelift-io/spacelift-selfhosted/google"
+  version = "~> 3.2"
+
+  region           = var.region
+  project          = var.project
+  website_domain   = var.app_domain
+  database_version = "POSTGRES_17"
+
+  create_container_registry = false
+}
+```
+
+With the flag set to `false`:
+
+- the module creates neither the private repository nor the public launcher repository, even if `enable_external_workers` is `true`. External workers then pull the launcher image from `oci.spacelift.io` with credentials.
+- the GKE node service account doesn't get the project-wide `roles/artifactregistry.reader` role. If you bring your own cluster (`enable_gke = false`) and its nodes relied on this grant to read Artifact Registry, grant the role yourself. `node_service_account` is not needed in this case.
+- the outputs don't contain any image settings: `artifact_repository_url` is `null`, `shell` has no `ARTIFACT_REGISTRY_DOMAIN`, `BACKEND_IMAGE` or `LAUNCHER_IMAGE`, `helm_values` has no `shared.image` and `kubernetes_secrets` has no `LAUNCHER_IMAGE` or `LAUNCHER_IMAGE_TAG`. Set the images and the image pull secret in your Helm values instead.
+
+The module needs Terraform 1.1 or newer (or OpenTofu 1.6 or newer), because it uses `moved` blocks to keep existing installations unchanged.
+
+#### Switch an existing installation to another registry
+
+On an existing installation, turning the flag off removes the Artifact Registry repositories from the module. Do it in this order:
+
+1. Upgrade the module, leave the flag unset and apply. The plan only moves the resources to new addresses (for example `module.artifacts` to `module.artifacts[0]`), nothing is created or destroyed.
+2. Point your services at the images in the new registry in your Helm values. Until then, the services keep pulling from Artifact Registry.
+3. Decide what happens to the repositories:
+   - **Keep them** (recommended). Remove them from the state, then set `create_container_registry = false` and apply. The repositories and their images stay in your project, the module just stops managing them. With external workers this also keeps the public launcher repository and its public read access, remove them yourself once you don't need them:
+
+     ```shell
+     tofu state rm 'module.spacelift.module.artifacts[0]'
+     ```
+
+     Replace `spacelift` with the name of your module block, and `tofu` with `terraform` if you use Terraform. Set the flag to `false` before the next apply, otherwise the module creates the repositories again.
+   - **Delete them with the images**. Set `create_container_registry = false` and apply.
+
+In both cases the apply removes the project-wide `roles/artifactregistry.reader` grant of the GKE node service account. The new registry doesn't need it, but if your nodes pull other images from Artifact Registry in this project, grant the role yourself before the apply.
+
+> [!WARNING]
+> If you set the flag to `false` without keeping the repositories first, the apply deletes them and all the images in them. It doesn't fail, so check the plan before you apply.
 
 ### With VCS Gateway
 

@@ -5,25 +5,42 @@ resource "random_id" "seed" {
 locals {
   network                   = [module.network.network, var.network][var.enable_network ? 0 : 1]
   subnetwork                = [module.network.subnetwork, var.subnetwork][var.enable_network ? 0 : 1]
-  gke_service_account_email = var.enable_gke ? module.iam.gke_service_account_email : var.node_service_account.email
+  gke_service_account_email = var.enable_gke ? module.iam.gke_service_account_email : try(var.node_service_account.email, null)
+
+  backend_image  = var.create_container_registry ? "${module.artifacts[0].repository_url}/spacelift-backend" : null
+  launcher_image = var.create_container_registry ? "${module.artifacts[0].launcher_repository_url}/spacelift-launcher" : null
+
+  # Artifacts part of the "shell" output, empty if the module doesn't create the container registry
+  artifacts_env = var.create_container_registry ? {
+    ARTIFACT_REGISTRY_DOMAIN = module.artifacts[0].repository_domain
+    BACKEND_IMAGE            = local.backend_image
+    LAUNCHER_IMAGE           = local.launcher_image
+  } : {}
 }
 
 module "iam" {
   source = "./modules/iam"
   seed   = random_id.seed.hex
 
-  enable_gke               = var.enable_gke
-  node_service_account     = var.node_service_account
-  app_service_account_name = var.app_service_account_name
-  project                  = var.project
+  enable_gke                = var.enable_gke
+  node_service_account      = var.node_service_account
+  app_service_account_name  = var.app_service_account_name
+  project                   = var.project
+  create_container_registry = var.create_container_registry
 }
 
 module "artifacts" {
   source     = "./modules/artifacts"
   depends_on = [module.iam]
   seed       = random_id.seed.hex
+  count      = var.create_container_registry ? 1 : 0
 
   enable_external_workers = var.enable_external_workers
+}
+
+moved {
+  from = module.artifacts
+  to   = module.artifacts[0]
 }
 
 module "network" {

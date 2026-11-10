@@ -72,6 +72,12 @@ variable "enable_external_workers" {
   default     = false
 }
 
+variable "create_container_registry" {
+  type        = bool
+  description = "Whether to create the Artifact Registry repositories for the backend and launcher images, including the public launcher repository for external workers. Set it to false if you pull the images from another registry, such as oci.spacelift.io. The artifact_repository_url output is then null, and the shell, helm_values and kubernetes_secrets outputs have no image settings. On an existing installation, setting it to false deletes the repositories with their images, see the README for how to keep them instead."
+  default     = true
+}
+
 variable "ip_cidr_range" {
   type        = string
   description = "The IP CIDR range for the subnetwork used by the GKE cluster"
@@ -95,7 +101,7 @@ variable "node_service_account" {
     email : string,
   })
   default     = null
-  description = "If GKE is disabled, provide your existing cluster default node service account here. This is used to grant privileges of your cluster to pull docker images."
+  description = "If GKE is disabled, provide your existing cluster default node service account here. This is used to grant privileges of your cluster to pull docker images. Not needed if 'create_container_registry' is set to false."
 }
 
 variable "network" {
