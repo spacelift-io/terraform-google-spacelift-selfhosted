@@ -188,7 +188,20 @@ With the flag set to `false`:
 
 - the module creates neither the private repository nor the public launcher repository, even if `enable_external_workers` is `true`. External workers then pull the launcher image from `oci.spacelift.io` with credentials.
 - the GKE node service account doesn't get the project-wide `roles/artifactregistry.reader` role. If you bring your own cluster (`enable_gke = false`) and its nodes relied on this grant to read Artifact Registry, grant the role yourself. `node_service_account` is not needed in this case.
-- the outputs don't contain any image settings: `artifact_repository_url` is `null`, `shell` has no `ARTIFACT_REGISTRY_DOMAIN`, `BACKEND_IMAGE` or `LAUNCHER_IMAGE`, `helm_values` has no `shared.image` and `kubernetes_secrets` has no `LAUNCHER_IMAGE` or `LAUNCHER_IMAGE_TAG`. Set the images and the image pull secret in your Helm values instead.
+- `artifact_repository_url` is `null`, `shell` has no `ARTIFACT_REGISTRY_DOMAIN`, `BACKEND_IMAGE` or `LAUNCHER_IMAGE`, and `kubernetes_secrets` has no `LAUNCHER_IMAGE` or `LAUNCHER_IMAGE_TAG`.
+- the `helm_values` output has no `shared.image`. Instead it pulls the backend and launcher images from `oci.spacelift.io` (`shared.backendImage` and `shared.launcherImage`, tagged with `spacelift_version`) with the pull secret named in `image_pull_secret_name` (`spacelift-registry` by default). These keys need Helm chart 7.1.0 or newer.
+
+Create the pull secret in the namespace you install Spacelift to, with the registry credentials that come with your license:
+
+```shell
+kubectl create secret docker-registry spacelift-registry \
+  --namespace spacelift \
+  --docker-server=oci.spacelift.io \
+  --docker-username=<registry username> \
+  --docker-password=<registry password>
+```
+
+To pull from another registry, override `shared.backendImage` and `shared.launcherImage` in your Helm values.
 
 The module needs Terraform 1.1 or newer (or OpenTofu 1.6 or newer), because it uses `moved` blocks to keep existing installations unchanged.
 

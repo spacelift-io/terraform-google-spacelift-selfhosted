@@ -244,6 +244,7 @@ output "helm_values" {
     SERVER_DOMAIN               = var.website_domain
     BACKEND_IMAGE               = local.backend_image
     SPACELIFT_VERSION           = var.spacelift_version != null ? var.spacelift_version : ""
+    IMAGE_PULL_SECRET_NAME      = var.image_pull_secret_name
     SERVER_SERVICE_ACCOUNT_NAME = module.iam.backend_service_account_email
     DATABASE_CONNECTION_NAME    = var.enable_database ? module.db[0].database_connection_name : ""
     PUBLIC_IP_NAME              = module.network.gke_public_v4_name
