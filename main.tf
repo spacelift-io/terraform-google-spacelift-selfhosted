@@ -7,14 +7,16 @@ locals {
   subnetwork                = [module.network.subnetwork, var.subnetwork][var.enable_network ? 0 : 1]
   gke_service_account_email = var.enable_gke ? module.iam.gke_service_account_email : try(var.node_service_account.email, null)
 
-  backend_image  = var.create_container_registry ? "${module.artifacts[0].repository_url}/spacelift-backend" : null
-  launcher_image = var.create_container_registry ? "${module.artifacts[0].launcher_repository_url}/spacelift-launcher" : null
+  use_spacelift_registry = var.spacelift_registry_pull_secret_name != null
+
+  artifact_registry_backend_image  = try("${module.artifacts[0].repository_url}/spacelift-backend", null)
+  artifact_registry_launcher_image = try("${module.artifacts[0].launcher_repository_url}/spacelift-launcher", null)
 
   # Artifacts part of the "shell" output, empty if the module doesn't create the container registry
   artifacts_env = var.create_container_registry ? {
     ARTIFACT_REGISTRY_DOMAIN = module.artifacts[0].repository_domain
-    BACKEND_IMAGE            = local.backend_image
-    LAUNCHER_IMAGE           = local.launcher_image
+    BACKEND_IMAGE            = local.artifact_registry_backend_image
+    LAUNCHER_IMAGE           = local.artifact_registry_launcher_image
   } : {}
 }
 

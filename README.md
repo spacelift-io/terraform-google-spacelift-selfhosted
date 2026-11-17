@@ -180,7 +180,8 @@ module "spacelift" {
   website_domain   = var.app_domain
   database_version = "POSTGRES_17"
 
-  create_container_registry = false
+  create_container_registry           = false
+  spacelift_registry_pull_secret_name = "spacelift-registry"
 }
 ```
 
@@ -189,9 +190,11 @@ With the flag set to `false`:
 - the module creates neither the private repository nor the public launcher repository, even if `enable_external_workers` is `true`. External workers then pull the launcher image from `oci.spacelift.io` with credentials.
 - the GKE node service account doesn't get the project-wide `roles/artifactregistry.reader` role. If you bring your own cluster (`enable_gke = false`) and its nodes relied on this grant to read Artifact Registry, grant the role yourself. `node_service_account` is not needed in this case.
 - `artifact_repository_url` is `null`, `shell` has no `ARTIFACT_REGISTRY_DOMAIN`, `BACKEND_IMAGE` or `LAUNCHER_IMAGE`, and `kubernetes_secrets` has no `LAUNCHER_IMAGE` or `LAUNCHER_IMAGE_TAG`.
-- the `helm_values` output has no `shared.image`. Instead it pulls the backend and launcher images from `oci.spacelift.io` (`shared.backendImage` and `shared.launcherImage`, tagged with `spacelift_version`) with the pull secret named in `image_pull_secret_name` (`spacelift-registry` by default). These keys need Helm chart 7.1.0 or newer.
+- the `helm_values` output has no `shared.image` from Artifact Registry.
 
-Create the pull secret in the namespace you install Spacelift to, with the registry credentials that come with your license:
+Set `spacelift_registry_pull_secret_name` to pull the backend and launcher images from `oci.spacelift.io`. The `helm_values` output then references that pull secret (`shared.imagePullSecrets`) and enables the launcher image (`shared.launcherImage.enabled`). It sets no image tag, so the images follow the version of the Helm chart. These keys need Helm chart 7.1.0 or newer. The variable doesn't depend on `create_container_registry`, but you usually set both together.
+
+Create the pull secret yourself, in the namespace you install Spacelift to, with the registry credentials that come with your license. The module never sees the credentials, it only puts the secret name in `helm_values`:
 
 ```shell
 kubectl create secret docker-registry spacelift-registry \
@@ -201,7 +204,7 @@ kubectl create secret docker-registry spacelift-registry \
   --docker-password=<registry password>
 ```
 
-To pull from another registry, override `shared.backendImage` and `shared.launcherImage` in your Helm values.
+With `create_container_registry = false` and no `spacelift_registry_pull_secret_name`, `helm_values` sets no image. To pull from another registry, for example your own mirror, set `shared.backendImage` and `shared.launcherImage` in your Helm values.
 
 The module needs Terraform 1.1 or newer (or OpenTofu 1.6 or newer), because it uses `moved` blocks to keep existing installations unchanged.
 

@@ -223,7 +223,7 @@ output "kubernetes_secrets" {
     WEBHOOKS_ENDPOINT                              = "https://${var.website_domain}/webhooks"
     ADMIN_USERNAME                                 = var.admin_username != null ? var.admin_username : ""
     ADMIN_PASSWORD                                 = var.admin_password != null ? var.admin_password : ""
-    LAUNCHER_IMAGE                                 = local.launcher_image
+    LAUNCHER_IMAGE                                 = local.artifact_registry_launcher_image
     LAUNCHER_IMAGE_TAG                             = var.spacelift_version != null ? var.spacelift_version : ""
     VCS_GATEWAY_ENDPOINT                           = var.vcs_gateway_domain != "" ? "${var.vcs_gateway_domain}:443" : ""
 
@@ -241,20 +241,21 @@ output "kubernetes_secrets" {
 output "helm_values" {
   description = "Generates a Helm values.yaml file that can be used when deploying Spacelift. This output is just included as a convenience for use as part of the EKS getting started guide."
   value = templatefile("${path.module}/templates/helm-values.tftpl", {
-    SERVER_DOMAIN               = var.website_domain
-    BACKEND_IMAGE               = local.backend_image
-    SPACELIFT_VERSION           = var.spacelift_version != null ? var.spacelift_version : ""
-    IMAGE_PULL_SECRET_NAME      = var.image_pull_secret_name
-    SERVER_SERVICE_ACCOUNT_NAME = module.iam.backend_service_account_email
-    DATABASE_CONNECTION_NAME    = var.enable_database ? module.db[0].database_connection_name : ""
-    PUBLIC_IP_NAME              = module.network.gke_public_v4_name
-    PUBLIC_IPV6_NAME            = module.network.gke_public_v6_name
-    EXTERNAL_WORKERS_ENABLED    = var.enable_external_workers
-    MQTT_IP_NAME                = module.network.mqtt_v4_name
-    MQTT_IPV6_NAME              = module.network.mqtt_v6_name
-    VCS_GATEWAY_ENABLED         = var.vcs_gateway_domain != ""
-    VCS_GATEWAY_DOMAIN          = var.vcs_gateway_domain
-    VCS_GATEWAY_IP_NAME         = module.network.vcs_gateway_address_name
+    SERVER_DOMAIN                       = var.website_domain
+    USE_SPACELIFT_REGISTRY              = local.use_spacelift_registry
+    SPACELIFT_REGISTRY_PULL_SECRET_NAME = var.spacelift_registry_pull_secret_name
+    BACKEND_IMAGE                       = local.artifact_registry_backend_image
+    SPACELIFT_VERSION                   = var.spacelift_version != null ? var.spacelift_version : ""
+    SERVER_SERVICE_ACCOUNT_NAME         = module.iam.backend_service_account_email
+    DATABASE_CONNECTION_NAME            = var.enable_database ? module.db[0].database_connection_name : ""
+    PUBLIC_IP_NAME                      = module.network.gke_public_v4_name
+    PUBLIC_IPV6_NAME                    = module.network.gke_public_v6_name
+    EXTERNAL_WORKERS_ENABLED            = var.enable_external_workers
+    MQTT_IP_NAME                        = module.network.mqtt_v4_name
+    MQTT_IPV6_NAME                      = module.network.mqtt_v6_name
+    VCS_GATEWAY_ENABLED                 = var.vcs_gateway_domain != ""
+    VCS_GATEWAY_DOMAIN                  = var.vcs_gateway_domain
+    VCS_GATEWAY_IP_NAME                 = module.network.vcs_gateway_address_name
   })
 }
 
