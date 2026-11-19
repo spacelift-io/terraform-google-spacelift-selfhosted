@@ -72,6 +72,23 @@ variable "enable_external_workers" {
   default     = false
 }
 
+variable "create_container_registry" {
+  type        = bool
+  description = "Whether to create the Artifact Registry repositories for the backend and launcher images, including the public launcher repository for external workers. Set it to false if you pull the images from another registry, such as oci.spacelift.io. The artifact_repository_url output is then null, and the shell, kubernetes_secrets and helm_values outputs have no image settings from Artifact Registry. To pull the images from oci.spacelift.io, set spacelift_registry_pull_secret_name as well. On an existing installation, setting it to false deletes the repositories with their images, see the README for how to keep them instead."
+  default     = true
+}
+
+variable "spacelift_registry_pull_secret_name" {
+  type        = string
+  description = "Name of the Kubernetes secret holding your credentials for oci.spacelift.io. Set this to pull both the backend and launcher images from the Spacelift registry: the helm_values output then references this secret and enables the chart's launcher image, and no longer sets an image from the module's Artifact Registry. You create the secret yourself, in the namespace you install Spacelift to. Launcher pull credentials for worker pools are not covered by this secret, set them on the worker pool controller as well."
+  default     = null
+
+  validation {
+    condition     = var.spacelift_registry_pull_secret_name != ""
+    error_message = "spacelift_registry_pull_secret_name must not be empty."
+  }
+}
+
 variable "ip_cidr_range" {
   type        = string
   description = "The IP CIDR range for the subnetwork used by the GKE cluster"
@@ -95,7 +112,7 @@ variable "node_service_account" {
     email : string,
   })
   default     = null
-  description = "If GKE is disabled, provide your existing cluster default node service account here. This is used to grant privileges of your cluster to pull docker images."
+  description = "If GKE is disabled, provide your existing cluster default node service account here. This is used to grant privileges of your cluster to pull docker images. Not needed if 'create_container_registry' is set to false."
 }
 
 variable "network" {
