@@ -62,6 +62,16 @@ output "gke_public_v6_address" {
   description = "Public IPv6 address for GKE Ingresses"
 }
 
+output "gke_public_v4_name" {
+  value       = module.network.gke_public_v4_name
+  description = "Name of the global IPv4 address for GKE Ingresses, for the kubernetes.io/ingress.global-static-ip-name annotation"
+}
+
+output "gke_public_v6_name" {
+  value       = module.network.gke_public_v6_name
+  description = "Name of the global IPv6 address for GKE Ingresses, for the kubernetes.io/ingress.global-static-ip-name annotation"
+}
+
 output "mqtt_ipv4_address" {
   value       = module.network.mqtt_v4_address
   description = "The IPv4 address of the MQTT service. It is empty if 'enable_external_workers' is set to false."
